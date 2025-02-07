@@ -77,6 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->profilPictures = new ArrayCollection();
         $this->libraries = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+       
     }
 
     public function getId(): ?int
