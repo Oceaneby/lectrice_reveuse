@@ -28,7 +28,7 @@ class Book
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $publication_date = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $cover_image = null;
 
     #[ORM\ManyToOne(inversedBy: 'books')]
@@ -119,7 +119,7 @@ class Book
         return $this->cover_image;
     }
 
-    public function setCoverImage(?string $cover_image): static
+    public function setCoverImage(?string $cover_image): self
     {
         $this->cover_image = $cover_image;
 
