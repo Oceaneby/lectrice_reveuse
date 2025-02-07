@@ -29,7 +29,8 @@
             </tr>
             <tr>
                 <th>Cover_image</th>
-                <td>{{ book.coverImage }}</td>
+               
+                <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="{{ book.title }}" />
             </tr>
         </tbody>
     </table>

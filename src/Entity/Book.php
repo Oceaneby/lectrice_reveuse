@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
@@ -119,9 +120,15 @@ class Book
         return $this->cover_image;
     }
 
-    public function setCoverImage(?string $cover_image): self
+    public function setCoverImage($cover_image): self
     {
-        $this->cover_image = $cover_image;
+        if ($cover_image instanceof UploadedFile) {
+            // Si c'est un objet UploadedFile, on le déplace et on conserve son nom dans la base de données
+            $this->cover_image = $cover_image->getClientOriginalName();
+        } else {
+            // Sinon, c'est probablement déjà une chaîne de caractères (nom du fichier)
+            $this->cover_image = (string) $cover_image;
+        }
 
         return $this;
     }

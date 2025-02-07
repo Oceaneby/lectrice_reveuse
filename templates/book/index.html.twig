@@ -25,7 +25,8 @@
                 <td>{{ book.description }}</td>
                 <td>{{ book.isbn }}</td>
                 <td>{{ book.publicationDate ? book.publicationDate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ book.coverImage }}</td>
+               
+                <td>  <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="{{ book.title }}" /></td>
                 <td>
                     <a href="{{ path('app_book_show', {'id': book.id}) }}">show</a>
                     <a href="{{ path('app_book_edit', {'id': book.id}) }}">edit</a>
