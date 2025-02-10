@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\File\File;
 
 #[Route('/book')]
 final class BookController extends AbstractController
@@ -81,13 +82,57 @@ final class BookController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_book_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Book $book, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Book $book, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
+        // dump($book->getId());
+        
+        // Exemple d'ajout d'un fichier existant dans le formulaire
+    $cover_imagePath = $book->getCoverImage(); // Récupérer le nom du fichier enregistré en base de données
+    if ($cover_imagePath) {
+        // Créer un objet File avec le chemin du fichier
+        $cover_imageFile = new File($this->getParameter('book_cover_directory') . '/' . $cover_imagePath);
+        
+        // Remettre ce fichier dans le formulaire
         $form = $this->createForm(BookType::class, $book);
+        $form->get('cover_image')->setData($cover_imageFile);
+    } else {
+        // Créer le formulaire si aucun fichier n'est trouvé
+        $form = $this->createForm(BookType::class, $book);
+    }
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // $cover_image = $book->getCoverImage();
+            $cover_image = $form->get('cover_image')->getData();
+
+            if ($cover_image) {
+                // Créer un nom de fichier unique basé sur le slug du titre et un identifiant unique
+                $originalFilename = pathinfo($cover_image->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$cover_image->guessExtension();
+
+               
+
+                try {
+                    // Déplace le fichier dans le répertoire 'uploads/book_cover/'
+                    $cover_image->move(
+                        $this->getParameter('book_cover_directory'), // Configurer le répertoire dans services.yaml
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // Gérer l'erreur si l'image ne peut pas être déplacée
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image.');
+                    return $this->redirectToRoute('book_new');
+                }
+
+                // Enregistrer le nom du fichier dans la base de données
+                $book->setCoverImage($newFilename);
+            }
+
+            $entityManager->persist($book);
             $entityManager->flush();
+           
 
             return $this->redirectToRoute('app_book_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -98,7 +143,7 @@ final class BookController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_book_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_book_delete', methods: ['POST'])]
     public function delete(Request $request, Book $book, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$book->getId(), $request->getPayload()->getString('_token'))) {
@@ -106,6 +151,6 @@ final class BookController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_book_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_book_index');
     }
 }

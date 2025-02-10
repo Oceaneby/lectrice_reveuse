@@ -12,9 +12,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\Image;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Form\CallbackTransformer;
+
 
 class BookType extends AbstractType
 {
+   
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -39,7 +44,10 @@ class BookType extends AbstractType
                         'mimeTypesMessage' => 'Merci de télécharger une image au bon format'
                     ])
                     ],
+                'required' => false,
+                'data_class' => null,
             ])
+            
             ->add('author', EntityType::class, [
                 'class' => Author::class,
                 'choice_label' => 'id',
@@ -54,9 +62,15 @@ class BookType extends AbstractType
                 'class' => Publisher::class,
                 'choice_label' => 'id',
                 'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
-            ])
-        ;
+            ]);
+
+       
+           
     }
+     
+    
+    
+   
 
     public function configureOptions(OptionsResolver $resolver): void
     {
