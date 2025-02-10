@@ -11,10 +11,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
 
 class RegistrationFormType extends AbstractType
 {
@@ -36,8 +38,15 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('birth_date', DateType::class, [
                 'label' => 'Date de naissance',
-                'widget' => 'single_text',
-                ])
+                'widget' => 'single_text', // Un seul input
+                'html5' => true,           // Génère un <input type="date">
+                'format' => 'yyyy-MM-dd',  // Nécessaire pour le <input type="date">
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer votre date de naissance',
+                    ]),
+                ],
+            ])
           
             ->add('plainPassword', PasswordType::class, [
                 // instead of being set onto the object directly,
@@ -50,7 +59,7 @@ class RegistrationFormType extends AbstractType
                         'message' => 'Please enter a password',
                     ]),
                     new Length([
-                        'min' => 6,
+                        'min' => 8,
                         'minMessage' => 'Your password should be at least {{ limit }} characters',
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,

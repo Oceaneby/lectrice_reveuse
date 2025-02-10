@@ -8,6 +8,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -18,6 +19,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[UniqueEntity(fields: ['email'], message: "Email indisponible.")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    
+    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -42,6 +45,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $registration_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    
+    // #[Assert\Date(message: 'Veuillez entrer une date valide.')]
+    #[Assert\LessThan("today", message:'La date de naissance doit être dans le passé.')]
+    #[Assert\GreaterThan("1900-01-01", message: "La date de naissance doit être après le 1er janvier 1900.")]
     private ?\DateTimeInterface $birth_date = null;
 
     #[ORM\Column]
