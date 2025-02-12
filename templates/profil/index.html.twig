@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block body %}
+    <h1>Modifier mon profil</h1>
+
+  
+    {% if app.user.profilPicture is not null %}
+        <img src="{{ asset('uploads/profil_pictures/' ~ app.user.profilPicture.imageUrl) }}" alt="Photo de profil" />
+    {% else %}
+        <p>Aucune photo de profil.</p>
+    {% endif %}
+
+    {{ form_start(form) }}
+        {{ form_row(form.first_name) }}
+        {{ form_row(form.last_name) }}
+        {{ form_row(form.username) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.password) }}
+        <button class="btn">Enregistrer les modifications</button>
+    {{ form_end(form) }}
+{% endblock %}

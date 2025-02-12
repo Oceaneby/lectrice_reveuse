@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ma bibliothèque{% endblock %}
+
+{% block body %}
+    <h1>Ma bibliothèque</h1>
+
+    {% if library.bookshelves|length > 0 %}
+        <div class="bookshelves">
+            {% for bookshelf in library.bookshelves %}
+                <div class="bookshelf">
+                    <h2>{{ bookshelf.name }}</h2>
+                    <ul>
+                        {% for book in bookshelf.books %}
+                            <li>
+                                <img src="{{ asset('uploads/book_covers/' ~ book.cover_image_url) }}" alt="Cover image" />
+                                <h3>{{ book.title }}</h3>
+                                <p>Auteur : {{ book.author.name }}</p>
+                                <p>Genre : {{ book.genre.name }}</p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Aucune étagère dans votre bibliothèque.</p>
+    {% endif %}
+{% endblock %}

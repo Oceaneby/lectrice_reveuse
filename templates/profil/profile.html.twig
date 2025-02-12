@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block body %}
+<h1>Mon profil</h1>
+
+    {% if app.user.profilPicture is not null %}
+        <img src="{{ asset('uploads/profil_pictures/' ~ app.user.profilPicture.imageUrl) }}" alt="Photo de profil" />
+    {% else %}
+        <p>Aucune photo de profil.</p>
+    {% endif %}
+
+    <h2>Mes informations personnelle </h2>
+    <p>{{ (app.user.username) }}</p>
+
+    {% endblock %}

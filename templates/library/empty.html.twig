@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bibliothèque Vide{% endblock %}
+
+{% block body %}
+<div class="flex items-center justify-center min-h-screen bg-gray-50">
+    <div class="text-center bg-white p-8 rounded-lg shadow-md max-w-sm w-full">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Votre bibliothèque est vide !</h2>
+        <p class="text-gray-600 mb-4">Il semble que vous n'avez pas encore ajouté d'éléments à votre bibliothèque.</p>
+        <p class="text-sm text-gray-500 mb-6">Allez-y, commencez à ajouter du contenu pour personnaliser votre bibliothèque.</p>
+        <a href="#" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Ajouter un élément</a>
+    </div>
+</div>
+{% endblock %}
