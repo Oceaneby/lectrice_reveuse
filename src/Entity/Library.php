@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\LibraryRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: LibraryRepository::class)]
 class Library
@@ -18,9 +20,11 @@ class Library
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'libraries')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Book $book = null;
+    /**
+     * @var Collection<int, Book>
+     */
+    #[ORM\ManyToMany(targetEntity: Book::class, inversedBy: 'libraries')]
+    private Collection $book;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $added_date = null;
@@ -33,6 +37,23 @@ class Library
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $end_date = null;
+
+    /**
+     * @var Collection<int, >
+     */
+    #[ORM\OneToMany(targetEntity: Bookshelf::class, mappedBy: 'library')]
+    private Collection $bookshelve;
+
+    public function __construct()
+    {
+        $this->book = new ArrayCollection();
+        $this->bookshelve = new ArrayCollection(); // Initialiser la collection de livres
+    }
+
+    public function getBookshelves(): Collection
+    {
+        return $this->bookshelve;
+    }
 
     public function getId(): ?int
     {
@@ -51,9 +72,27 @@ class Library
         return $this;
     }
 
-    public function getBook(): ?Book
+    public function getBook(): Collection
     {
         return $this->book;
+    }
+
+    // Ajouter un livre à la bibliothèque
+    public function addBook(Book $book): static
+    {
+        if (!$this->book->contains($book)) {
+            $this->book[] = $book;
+        }
+
+        return $this;
+    }
+
+    // Supprimer un livre de la bibliothèque
+    public function removeBook(Book $book): static
+    {
+        $this->book->removeElement($book);
+
+        return $this;
     }
 
     public function setBook(?Book $book): static

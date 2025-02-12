@@ -5,7 +5,7 @@
 {% block body %}
     <h1>Ma bibliothèque</h1>
 
-    {% if library.bookshelves|length > 0 %}
+    {% if library.bookshelves is not empty %}
         <div class="bookshelves">
             {% for bookshelf in library.bookshelves %}
                 <div class="bookshelf">
@@ -15,7 +15,7 @@
                             <li>
                                 <img src="{{ asset('uploads/book_covers/' ~ book.cover_image_url) }}" alt="Cover image" />
                                 <h3>{{ book.title }}</h3>
-                                <p>Auteur : {{ book.author.name }}</p>
+                                <p>Auteur : {{ book.author.fullName }}</p>
                                 <p>Genre : {{ book.genre.name }}</p>
                             </li>
                         {% endfor %}

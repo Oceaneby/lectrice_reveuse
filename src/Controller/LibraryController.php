@@ -8,6 +8,7 @@ use App\Entity\Book;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\LibraryRepository;
+use App\Repository\BookRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,78 +16,88 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/library')]
 final class LibraryController extends AbstractController
 {
-    #[Route( name: 'app_library')]
+    #[Route(name: 'app_library')]
     public function viewLibrary(LibraryRepository $libraryRepository): Response
     {
         $user = $this->getUser();
 
-        
+
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
-        $library = $libraryRepository->findOneBy(['user' => $user]);
-        if(!$library){
+        $library = $libraryRepository->findBy(['user' => $user]);
+        if (!$library) {
             return $this->render('library/empty.html.twig');
         }
+        // Vérifie si la bibliothèque a des étagères
+        $library = $libraryRepository->findOneBy(['user' => $user]);
+        $bookshelve = $library->getBookshelves();
+
         return $this->render('library/index.html.twig', [
             'library' => $library,
+            'bookshelve' => $bookshelve
         ]);
     }
 
-     // Ajouter un livre à la bibliothèque
-     #[Route('/add', name: 'app_library_add', methods: ['GET', 'POST'])]
-     public function addBook(Request $request, LibraryRepository $libraryRepository, EntityManagerInterface $em): Response
-     {
-         $user = $this->getUser();
-         
-         if (!$user) {
-             return $this->redirectToRoute('app_login');
-         }
-         
-         $library = $libraryRepository->findOneBy(['user' => $user]);
- 
-         if (!$library) {
-             // Créer une nouvelle bibliothèque si elle n'existe pas
-             $library = new Library();
-             $library->setUser($user);
-             $em->persist($library);
-             $em->flush();
-         }
- 
-         $book = new Book();
-         $book->setLibrary($library);
- 
-         // Tu pourrais ajouter d'autres champs comme le titre, l'auteur, etc.
-         $form = $this->createFormBuilder($book)
-             ->add('title')
-             ->add('author')
-             ->getForm();
- 
-         if ($form->handleRequest($request)->isSubmitted() && $form->isValid()) {
-             $em->persist($book);
-             $em->flush();
- 
-             $this->addFlash('success', 'Le livre a été ajouté avec succès.');
-             return $this->redirectToRoute('app_library');
-         }
- 
-         return $this->render('library/add.html.twig', [
-             'form' => $form->createView(),
-         ]);
-     }
- 
-     // Supprimer un livre
-     #[Route('/delete/{id}', name: 'app_library_delete', methods: ['POST'])]
-     public function deleteBook(Book $book, EntityManagerInterface $em): Response
-     {
-         if ($book->getLibrary()->getUser() !== $this->getUser()) {
-             throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce livre.');
-         }
- 
-         $em->remove($book);
-         $em->flush();
- 
-         $this->addFlash('success', 'Le livre a été supprimé.');
-         return $this->redirectToRoute('app_library');
-     }
+    #[Route('/library/add/{bookId}', name: 'app_library_add', methods: ['POST'])]
+    public function addBookToLibrary(int $bookId, BookRepository $bookRepository, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $book = $bookRepository->find($bookId);
+        if (!$book) {
+            throw $this->createNotFoundException('Le livre demandé n\'existe pas.');
+        }
+
+        // Vérifier si le livre est déjà dans la bibliothèque de l'utilisateur
+        $existingLibraryEntry = $em->getRepository(Library::class)->findOneBy(['user' => $user, 'book' => $book]);
+        if ($existingLibraryEntry) {
+            $this->addFlash('info', 'Le livre est déjà dans votre bibliothèque.');
+            return $this->redirectToRoute('app_library');
+        }
+
+        $libraryEntry = new Library();
+        $libraryEntry->setUser($user)
+            ->setBook($book)
+            ->setAddedDate(new \DateTime());
+
+        $em->persist($libraryEntry);
+        $em->flush();
+
+        $this->addFlash('success', 'Le livre a été ajouté à votre bibliothèque.');
+        return $this->redirectToRoute('app_library');
+    }
+    #[Route('/library/remove/{bookId}', name: 'app_library_remove', methods: ['POST'])]
+    public function removeBookFromLibrary(int $bookId, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $libraryEntry = $em->getRepository(Library::class)->findOneBy(['user' => $user, 'book' => $bookId]);
+        if (!$libraryEntry) {
+            throw $this->createNotFoundException('Ce livre ne fait pas partie de votre bibliothèque.');
+        }
+
+        $em->remove($libraryEntry);
+        $em->flush();
+
+        $this->addFlash('success', 'Le livre a été retiré de votre bibliothèque.');
+        return $this->redirectToRoute('app_library');
+    }
+
+    // Afficher la liste de tous les livres disponibles à ajouter
+    #[Route('/add', name: 'app_book_list')]
+    public function listBooks(BookRepository $bookRepository): Response
+    {
+        $books = $bookRepository->findAll();
+
+        return $this->render('library/add.html.twig', [
+            'books' => $books,
+        ]);
+    }
 }

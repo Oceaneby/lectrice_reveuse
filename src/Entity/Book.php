@@ -47,7 +47,7 @@ class Book
     /**
      * @var Collection<int, Library>
      */
-    #[ORM\OneToMany(targetEntity: Library::class, mappedBy: 'book', orphanRemoval: true)]
+    #[ORM\ManyToMany(targetEntity: Library::class, mappedBy: 'book', orphanRemoval: true)]
     private Collection $libraries;
 
     /**
@@ -56,10 +56,17 @@ class Book
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'book', orphanRemoval: true)]
     private Collection $reviews;
 
+    /**
+     * @var Collection<int, Review>
+     */
+    #[ORM\ManyToMany(targetEntity: Bookshelf::class, mappedBy:'books')]
+    private Collection $bookshelve;
+
     public function __construct()
     {
         $this->libraries = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->bookshelve = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -224,6 +231,33 @@ class Book
             if ($review->getBook() === $this) {
                 $review->setBook(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bookshelf>
+     */
+    public function getBookshelves(): Collection
+    {
+        return $this->bookshelve;
+    }
+
+    public function addBookshelf(Bookshelf $bookshelf): static
+    {
+        if (!$this->bookshelve->contains($bookshelf)) {
+            $this->bookshelve->add($bookshelf);
+            $bookshelf->addBook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBookshelf(Bookshelf $bookshelf): static
+    {
+        if ($this->bookshelve->removeElement($bookshelf)) {
+            $bookshelf->removeBook($this);
         }
 
         return $this;

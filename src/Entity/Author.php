@@ -74,6 +74,12 @@ class Author
         return $this;
     }
 
+     // Cette méthode retourne le nom complet de l'auteur
+     public function getFullName(): string
+     {
+         return $this->first_name . ' ' . $this->last_name;
+     }
+
     public function getBiography(): ?string
     {
         return $this->biography;
