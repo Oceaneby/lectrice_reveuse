@@ -1,68 +1,140 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier mon profil{% endblock %}
+{% block title %}Modifier mon profil
+{% endblock %}
 
 {% block body %}
-<div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-    <h1 class="text-3xl font-semibold text-center mb-6">Modifier mon profil</h1>
+	<div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+		<h1 class="text-3xl font-semibold text-center mb-6">Modifier mon profil</h1>
 
-    <!-- Photo de profil -->
-    <div class="flex justify-center mb-6">
-        {% if app.user.profilPicture is not null %}
-            <img src="{{ asset('uploads/profil_pictures/' ~ app.user.profilPicture.imageUrl) }}" alt="Photo de profil" class="w-32 h-32 rounded-full object-cover border-2 border-gray-300">
-        {% else %}
-            <div class="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center text-white text-xl font-semibold">
-                <span>Aucune</span>
+		{% for label, messages in app.flashes %}
+			<div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+				{% for message in messages %}
+					<p>{{ message }}</p>
+				{% endfor %}
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endfor %}
+
+		<!-- Photo de profil -->
+		<div class="flex justify-center mb-6">
+			{% if app.user.profilPicture is not null %}
+				<img src="{{ asset('uploads/profil_pictures/' ~ app.user.profilPicture.imageUrl) }}" alt="Photo de profil" class="w-32 h-32 rounded-full object-cover border-2 border-gray-300" id="profilePicturePreview">
+			{% else %}
+				<div class="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center text-white text-xl font-semibold">
+					<span>Aucune</span>
+				</div>
+			{% endif %}
+		</div>
+
+		<!-- Formulaire de modification -->
+		<div class="bg-gray-100 p-6 rounded-lg shadow-md">
+			{{ form_start(form, {'enctype': 'multipart/form_data'}) }}
+
+			<div class="mb-6">
+				{{ form_row(form.first_name, {'attr': {'class': 'form-input w-full p-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
+				<div class="text-red-500">
+					{{ form_errors(form.first_name) }}
+				</div>
+			</div>
+
+			<div class="mb-6">
+				{{ form_row(form.last_name, {'attr': {'class': 'form-input w-full p-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
+                <div class="text-red-500">
+					{{ form_errors(form.last_name) }}
+				</div>
+			</div>
+
+			<div class="mb-6">
+				{{ form_row(form.username, {'attr': {'class': 'form-input w-full p-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
+                <div class="text-red-500">
+					{{ form_errors(form.username) }}
+				</div>
+			</div>
+
+			<div class="mb-6">
+				{{ form_row(form.email, {'attr': {'class': 'form-input w-full p-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
+                <div class="text-red-500">
+					{{ form_errors(form.email) }}
+				</div>
+			</div>
+
+             <div class="mb-6">
+                {{ form_row(form.oldPassword, {'attr': {'class': 'form-input w-full p-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
+                <div class="text-red-500">
+                    {{ form_errors(form.oldPassword) }}
+                </div>
             </div>
-        {% endif %}
-    </div>
 
-    <!-- Formulaire de modification -->
-    <div class="bg-gray-100 p-6 rounded-lg shadow-md">
-        {{ form_start(form) }}
-        
-        <div class="mb-6">
-            <label for="{{ form.first_name.vars.id }}" class="block text-lg font-medium text-gray-700 mb-2">Prénom</label>
-            {{ form_widget(form.first_name, {'attr': {'class': 'form-input w-full p-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
-        </div>
+			<div class="mb-6">
+				{{ form_row(form.password, {'attr': {'class': 'form-input w-full p-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
+                <div class="text-red-500">
+                    {{ form_errors(form.password) }}
+                </div>
+			</div>
 
-        <div class="mb-6">
-            <label for="{{ form.last_name.vars.id }}" class="block text-lg font-medium text-gray-700 mb-2">Nom</label>
-            {{ form_widget(form.last_name, {'attr': {'class': 'form-input w-full p-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
-        </div>
+            <div class="mb-6">
+                {{ form_row(form.ConfirmPassword, {'attr': {'class': 'form-input w-full p-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
+                <div class="text-red-500">
+                    {{ form_errors(form.ConfirmPassword) }}
+                </div>
+            </div>
 
-        <div class="mb-6">
-            <label for="{{ form.username.vars.id }}" class="block text-lg font-medium text-gray-700 mb-2">Nom d'utilisateur</label>
-            {{ form_widget(form.username, {'attr': {'class': 'form-input w-full p-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
-        </div>
+			<div class="mb-6">
+				<div class="p-3 bg-gray-100 border rounded-md text-gray-600">{{ app.user.birthDate ? app.user.birthDate|date('d-m-Y') : 'Non renseignée' }}</div>
+			</div>
 
-        <div class="mb-6">
-            <label for="{{ form.email.vars.id }}" class="block text-lg font-medium text-gray-700 mb-2">Email</label>
-            {{ form_widget(form.email, {'attr': {'class': 'form-input w-full p-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
-        </div>
+			<div class="mb-6">
+				{{ form_row(form.profilPicture, {'attr': {'class': 'form-input w-full p-3  rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500', 'id': 'users_profilePicture'}}) }}
+                <div class="text-red-500">
+					{{ form_errors(form.profilPicture) }}
+				</div>
+			</div>
 
-        <div class="mb-6">
-            <label class="block text-lg font-medium text-gray-700 mb-2">Mot de passe</label>
-            {{ form_widget(form.password, {'attr': {'class': 'form-input w-full p-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'}, 'value': ''}) }}
-        </div>
+			<div class="flex justify-center mt-6">
+				<button type="submit" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out">
+					Enregistrer les modifications
+				</button>
+			</div>
 
-         <div class="mb-6">
-            <label class="block text-lg font-medium text-gray-700 mb-2">Date de naissance</label>
-            <div class="p-3 bg-gray-100 border rounded-md text-gray-600">{{ app.user.birthDate ? app.user.birthDate|date('d-m-Y') : 'Non renseignée' }}</div>
-        </div>
+			{{ form_end(form) }}
+		</div>
+	</div>
+     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const users_profilePicture = document.getElementById('users_profilePicture');
+            const profilePicturePreview = document.getElementById('profilePicturePreview');
 
-        <div class="mb-6">
-            <label for="{{ form.profilPicture.vars.id }}" class="block text-lg font-medium text-gray-700 mb-2">Photo de profil</label>
-            {{ form_widget(form.profilPicture, {'attr': {'class': 'form-input w-full p-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
-        </div>
+            // Vérification de la présence des éléments dans la console
+            if (users_profilePicture) {
+                console.log("Élément users_profilePicture trouvé.");
+            } else {
+                console.log("Élément users_profilePicture NON trouvé.");
+            }
 
-        <div class="flex justify-center mt-6">
-            <button type="submit" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out">
-                Enregistrer les modifications
-            </button>
-        </div>
+            if (profilePicturePreview) {
+                console.log("Élément profilePicturePreview trouvé.");
+            } else {
+                console.log("Élément profilePicturePreview NON trouvé.");
+            }
 
-        {{ form_end(form) }}
-    </div>
-</div>
+            // Fonction qui permet de voir un aperçu de l'image choisie
+            users_profilePicture.addEventListener('change', function(event) {
+                const file = event.target.files[0]; 
+
+                if (file) {
+                    const reader = new FileReader(); // Utiliser FileReader pour lire le fichier
+
+                    reader.onload = function(e) {
+                        profilePicturePreview.src = e.target.result;
+                        console.log("Aperçu mis à jour avec le fichier sélectionné.");
+                    };
+
+                    reader.readAsDataURL(file); // Lire le fichier en tant que Data URL
+                } else {
+                    console.log("Aucun fichier sélectionné.");
+                }
+            });
+        });
+    </script>
 {% endblock %}

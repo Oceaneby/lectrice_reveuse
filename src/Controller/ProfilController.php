@@ -6,12 +6,12 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\ProfilPicture;
 use App\Form\UserType;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -28,8 +28,8 @@ class ProfilController extends AbstractController
         ]);
     }
     // Modifier son propre profil
-    #[Route('/edit', name: 'profile_edit')]
-    public function edit(Request $request, EntityManagerInterface $entityManager)
+    #[Route('/edit', name: 'profile_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher)
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser(); // Récupérer l'utilisateur connecté
@@ -46,9 +46,59 @@ class ProfilController extends AbstractController
         
 
         $form->handleRequest($request);
+      
+        // dd('Form is being handled');
+        // dd($form->getData());
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // dd('Form submitted and valid');
             // Vérifier si un fichier a été téléchargé
+            $oldPassword = $form->get('oldPassword')->getData();
+            $password = $form->get('password')->getData();
+            $ConfirmPassword = $form->get('ConfirmPassword')->getData();
+
+            if (($password || $oldPassword) || $ConfirmPassword) {
+
+                if (!$oldPassword) {
+                    $this->addFlash('error', 'Veuillez renseigner votre ancien mot de passe.');
+                    return $this->redirectToRoute('profile_edit');
+                 }
+
+                if (!$password) {
+                    $this->addFlash('error', 'Veuillez renseigner un nouveau mot de passe.');
+                    return $this->redirectToRoute('profile_edit');
+                }
+
+                if ($oldPassword === $password) {
+                    $this->addFlash('error', 'Le nouveau mot de passe doit être différent de l\'ancien.');
+                    return $this->redirectToRoute('profile_edit');
+                }
+
+                if (!$passwordHasher->isPasswordValid($user, $oldPassword)) {
+                    $this->addFlash('error', 'Ancien mot de passe incorrect.');
+                    return $this->redirectToRoute('profile_edit');
+                }
+
+                if (($oldPassword && $password) && !$ConfirmPassword) {
+                    $this->addFlash('error', 'Veuillez confirmer votre nouveau mot de passe.');
+                    return $this->redirectToRoute('profile_edit');
+                }
+                
+                if ($password !== $ConfirmPassword) {
+                    $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
+                    return $this->redirectToRoute('profile_edit');
+                }
+              
+
+            // Si tout est correct, on met à jour le mot de passe
+                $hashedPassword = $passwordHasher->hashPassword($user, $password);
+                $user->setPassword($hashedPassword);
+            }
+    
+        
+        //  dd($form->getErrors(true));
+
+          
             /** @var UploadedFile $file */
             
             $file = $form->get('profilPicture')->getData();
@@ -92,4 +142,4 @@ class ProfilController extends AbstractController
             'user' => $user,
         ]);
     }
-    }
+}
