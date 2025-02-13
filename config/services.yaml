@@ -6,6 +6,7 @@
 parameters:
     book_cover_directory: '%kernel.project_dir%/public/uploads/book_cover'
     profil_pictures_directory: '%kernel.project_dir%/public/uploads/profil_pictures'
+    authors_pictures_directory: '%kernel.project_dir%/public/uploads/authors_pictures'
 services:
     # default configuration for services in *this* file
     App\Form\BookType:

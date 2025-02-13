@@ -82,6 +82,7 @@ class Library
     {
         if (!$this->book->contains($book)) {
             $this->book[] = $book;
+            $book->addLibrary($this);
         }
 
         return $this;
@@ -90,7 +91,9 @@ class Library
     // Supprimer un livre de la bibliothèque
     public function removeBook(Book $book): static
     {
-        $this->book->removeElement($book);
+       if ($this->book->removeElement($book)){
+        $book->removeLibrary($this);
+       };
 
         return $this;
     }

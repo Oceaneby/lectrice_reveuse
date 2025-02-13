@@ -3,15 +3,27 @@
 {% block title %}Mon profil{% endblock %}
 
 {% block body %}
-<h1>Mon profil</h1>
+<div class="max-w-4xl mx-auto p-6 text-center">
+    <!-- Titre centré -->
+    <h1 class="text-3xl font-semibold mb-6">Mon profil</h1>
 
-    {% if app.user.profilPicture is not null %}
-        <img src="{{ asset('uploads/profil_pictures/' ~ app.user.profilPicture.imageUrl) }}" alt="Photo de profil" />
-    {% else %}
-        <p>Aucune photo de profil.</p>
-    {% endif %}
-
-    <h2>Mes informations personnelle </h2>
-    <p>{{ (app.user.username) }}</p>
-
-    {% endblock %}
+    <!-- Photo de profil et titre centré -->
+    <div class="flex flex-col items-center justify-center mb-6">
+        {% if app.user.profilPicture is not null %}
+            <img src="{{ asset('uploads/profil_pictures/' ~ app.user.profilPicture.imageUrl) }}" alt="Photo de profil" class="w-32 h-32 rounded-full object-cover mb-4">
+        {% else %}
+            <div class="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center text-white text-xl font-semibold mb-4">
+                <span>Aucune</span>
+            </div>
+        {% endif %}
+        <!-- Informations personnelles -->
+        <h2 class="text-2xl font-medium mb-4">Mes informations personnelles</h2>
+        <p class="text-lg text-gray-700">{{ app.user.username }}</p>
+    </div>
+    <div class="text-center">
+        <a href="{{ path('profile_edit') }}" class="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out">
+            Modifier le profil
+        </a>
+    </div>
+</div>
+{% endblock %}

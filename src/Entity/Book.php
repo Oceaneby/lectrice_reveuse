@@ -187,8 +187,8 @@ class Book
     public function addLibrary(Library $library): static
     {
         if (!$this->libraries->contains($library)) {
-            $this->libraries->add($library);
-            $library->setBook($this);
+            $this->libraries[] = $library;
+           
         }
 
         return $this;

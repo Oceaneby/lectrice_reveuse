@@ -9,23 +9,32 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('username', TextType::class)
-            ->add('first_name', TextType::class)
-            ->add('last_name', TextType::class)
-            ->add('email', EmailType::class)
-            ->add('password')
-            ->add('registration_date', null, [
-                'widget' => 'single_text',
+            ->add('username', TextType::class,[
+                'required' => false,
             ])
-            ->add('birth_date', null, [
-                'widget' => 'single_text',
+            ->add('first_name', TextType::class, [
+                'required' => false,
             ])
+            ->add('last_name', TextType::class, [
+                'required' => false,
+            ])
+            ->add('email', EmailType::class, [
+                'required' => false,
+            ])
+            ->add('password', PasswordType::class, [
+                'required' => false,
+                'mapped' => false,
+            ])
+         
+           
             
             ->add('profilPicture', FileType::class, [
                 'label' => 'Nouvelle photo de profil',

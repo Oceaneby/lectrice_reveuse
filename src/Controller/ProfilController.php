@@ -28,7 +28,7 @@ class ProfilController extends AbstractController
         ]);
     }
     // Modifier son propre profil
-    #[Route('/profile/edit', name: 'profile_edit')]
+    #[Route('/edit', name: 'profile_edit')]
     public function edit(Request $request, EntityManagerInterface $entityManager)
     {
         /** @var \App\Entity\User $user */

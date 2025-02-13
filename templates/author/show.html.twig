@@ -3,44 +3,55 @@
 {% block title %}Author{% endblock %}
 
 {% block body %}
-    <h1>Author</h1>
+<div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <h1 class="text-3xl font-semibold text-center mb-6">Author Details</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ author.id }}</td>
-            </tr>
-            <tr>
-                <th>First_name</th>
-                <td>{{ author.firstName }}</td>
-            </tr>
-            <tr>
-                <th>Last_name</th>
-                <td>{{ author.lastName }}</td>
-            </tr>
-            <tr>
-                <th>Biography</th>
-                <td>{{ author.biography }}</td>
-            </tr>
-            <tr>
-                <th>Author_picture</th>
-                <td>{{ author.authorPicture }}</td>
-            </tr>
-            <tr>
-                <th>Birth_date</th>
-                <td>{{ author.birthDate ? author.birthDate|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Nationality</th>
-                <td>{{ author.nationality }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+        <table class="min-w-full table-auto">
+            <tbody>
+                <tr class="border-b">
+                    <th class="py-2 px-4 font-medium text-left text-gray-700">Id</th>
+                    <td class="py-2 px-4">{{ author.id }}</td>
+                </tr>
+                <tr class="border-b">
+                    <th class="py-2 px-4 font-medium text-left text-gray-700">First Name</th>
+                    <td class="py-2 px-4">{{ author.firstName }}</td>
+                </tr>
+                <tr class="border-b">
+                    <th class="py-2 px-4 font-medium text-left text-gray-700">Last Name</th>
+                    <td class="py-2 px-4">{{ author.lastName }}</td>
+                </tr>
+                <tr class="border-b">
+                    <th class="py-2 px-4 font-medium text-left text-gray-700">Biography</th>
+                    <td class="py-2 px-4">{{ author.biography }}</td>
+                </tr>
+                <tr class="border-b">
+                    <th class="py-2 px-4 font-medium text-left text-gray-700">Author Picture</th>
+                    <td class="py-2 px-4">
+                        {% if author.authorPicture %}
+                            <img src="{{ asset('uploads/authors_pictures/' ~ author.authorPicture) }}" alt="Photo de l'auteur" class="w-32 h-32 rounded-full object-cover border-2 border-gray-200">
+                        {% else %}
+                            <p class="text-gray-500">Aucune photo disponible</p>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr class="border-b">
+                    <th class="py-2 px-4 font-medium text-left text-gray-700">Birth Date</th>
+                    <td class="py-2 px-4">{{ author.birthDate ? author.birthDate|date('Y-m-d') : '' }}</td>
+                </tr>
+                <tr class="border-b">
+                    <th class="py-2 px-4 font-medium text-left text-gray-700">Nationality</th>
+                    <td class="py-2 px-4">{{ author.nationality }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-    <a href="{{ path('app_author_index') }}">back to list</a>
-
-    <a href="{{ path('app_author_edit', {'id': author.id}) }}">edit</a>
+    <div class="mt-6 flex justify-between items-center">
+        <a href="{{ path('app_author_index') }}" class="text-blue-600 hover:text-blue-800">Back to list</a>
+        <a href="{{ path('app_author_edit', {'id': author.id}) }}" class="text-blue-600 hover:text-blue-800">Edit</a>
+    </div>
 
     {{ include('author/_delete_form.html.twig') }}
+</div>
 {% endblock %}
