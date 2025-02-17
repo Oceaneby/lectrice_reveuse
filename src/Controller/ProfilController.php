@@ -124,9 +124,18 @@ class ProfilController extends AbstractController
 
 
                 $profilPicture->setUploadDate(new \DateTime());  // Optionnel : Enregistrer la date de téléchargement
+
+                // Si un profil existe déjà, on le retire avant d'ajouter le nouveau
+                if ($user->getProfilPictures()->count() > 0) {
+                    $oldProfilPicture = $user->getProfilPictures()->first();  // On prend la première image de profil
+                    $user->removeProfilPicture($oldProfilPicture);  // Supprimer l'ancienne image de la collection
+                    $entityManager->remove($oldProfilPicture);  // Supprimer l'ancienne image de la base de données
+                }
+                  // Ajouter la nouvelle photo à l'utilisateur
+                  $user->addProfilPicture($profilPicture); 
                 $entityManager->persist($profilPicture); // Enregistrer la photo dans la base de données
                 
-                $user->setProfilPicture($profilPicture);
+                
             }
     
             // Sauvegarder l'utilisateur

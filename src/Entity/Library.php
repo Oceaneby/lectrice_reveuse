@@ -24,7 +24,8 @@ class Library
      * @var Collection<int, Book>
      */
     #[ORM\ManyToMany(targetEntity: Book::class, inversedBy: 'libraries')]
-    private Collection $book;
+    #[ORM\JoinTable(name: 'library_books')]
+    private Collection $books;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $added_date = null;
@@ -41,18 +42,18 @@ class Library
     /**
      * @var Collection<int, >
      */
-    #[ORM\OneToMany(targetEntity: Bookshelf::class, mappedBy: 'library')]
-    private Collection $bookshelve;
+    #[ORM\OneToMany(targetEntity: Bookshelf::class, mappedBy: 'library', cascade: ["persist", "remove"])]
+    private Collection $bookshelves;
 
     public function __construct()
     {
-        $this->book = new ArrayCollection();
-        $this->bookshelve = new ArrayCollection(); // Initialiser la collection de livres
+        $this->books = new ArrayCollection();
+        $this->bookshelves = new ArrayCollection(); // Initialiser la collection de livres
     }
 
     public function getBookshelves(): Collection
     {
-        return $this->bookshelve;
+        return $this->bookshelves;
     }
 
     public function getId(): ?int
@@ -72,16 +73,16 @@ class Library
         return $this;
     }
 
-    public function getBook(): Collection
+    public function getBooks(): Collection
     {
-        return $this->book;
+        return $this->books;
     }
 
     // Ajouter un livre à la bibliothèque
     public function addBook(Book $book): static
     {
-        if (!$this->book->contains($book)) {
-            $this->book[] = $book;
+        if (!$this->books->contains($book)) {
+            $this->books[] = $book;
             $book->addLibrary($this);
         }
 
@@ -91,16 +92,16 @@ class Library
     // Supprimer un livre de la bibliothèque
     public function removeBook(Book $book): static
     {
-       if ($this->book->removeElement($book)){
+       if ($this->books->removeElement($book)){
         $book->removeLibrary($this);
        };
 
         return $this;
     }
 
-    public function setBook(?Book $book): static
+    public function setBooks(Collection $books): static
     {
-        $this->book = $book;
+        $this->books = $books;
 
         return $this;
     }

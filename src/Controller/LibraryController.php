@@ -53,7 +53,7 @@ final class LibraryController extends AbstractController
         }
 
         // Vérifier si le livre est déjà dans la bibliothèque de l'utilisateur
-        $existingLibraryEntry = $em->getRepository(Library::class)->findOneBy(['user' => $user, 'book' => $book]);
+        $existingLibraryEntry = $em->getRepository(Library::class)->findOneBy(['user' => $user, 'books' => $book]);
         if ($existingLibraryEntry) {
             $this->addFlash('info', 'Le livre est déjà dans votre bibliothèque.');
             return $this->redirectToRoute('app_library');
@@ -61,7 +61,7 @@ final class LibraryController extends AbstractController
 
         $libraryEntry = new Library();
         $libraryEntry->setUser($user)
-            ->setBook($book)
+            ->addBook($book)
             ->setAddedDate(new \DateTime());
 
         $em->persist($libraryEntry);
@@ -78,11 +78,11 @@ final class LibraryController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $libraryEntry = $em->getRepository(Library::class)->findOneBy(['user' => $user, 'book' => $bookId]);
+        $libraryEntry = $em->getRepository(Library::class)->findOneBy(['user' => $user, 'books' => $bookId]);
         if (!$libraryEntry) {
             throw $this->createNotFoundException('Ce livre ne fait pas partie de votre bibliothèque.');
         }
-
+        $libraryEntry->removeBook($bookId);
         $em->remove($libraryEntry);
         $em->flush();
 

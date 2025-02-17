@@ -63,8 +63,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      *  ProfilPicture>
      */
-    #[ORM\OneToOne(targetEntity: ProfilPicture::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?ProfilPicture $profilPicture = null;
+    #[ORM\OneToMany(targetEntity: ProfilPicture::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private Collection $profilPictures;
 
     /**
      * @var Collection<int, Library>
@@ -83,7 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->bookshelves = new ArrayCollection();
         $this->libraries = new ArrayCollection();
         $this->reviews = new ArrayCollection();
-       
+        $this->profilPictures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -232,25 +232,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-    public function getProfilPicture(): ?ProfilPicture
+    public function getProfilPictures(): Collection
     {
-        return $this->profilPicture;
+        return $this->profilPictures;
     }
 
-    public function setProfilPicture(?ProfilPicture $profilPicture): static
+    public function addProfilPicture(ProfilPicture $profilPicture): static
     {
-        if ($profilPicture !== null && $profilPicture !== $this->profilPicture) {
-           $profilPicture->setUser($this);
+        if (!$this->profilPictures->contains($profilPicture)) {
+            $this->profilPictures->add($profilPicture);
+            $profilPicture->setUser($this);
         }
-        $this->profilPicture = $profilPicture;
+
         return $this;
     }
 
-    public function removeProfilPicture(): static
+    public function removeProfilPicture(ProfilPicture $profilPicture): static
     {
-        if ($this->profilPicture !== null) {
-            $this->profilPicture->setUser(null);
-            $this->profilPicture = null;
+        if ($this->profilPictures->removeElement($profilPicture)) {
+            if ($profilPicture->getUser() === $this) {
+                $profilPicture->setUser(null);
+            }
         }
 
         return $this;

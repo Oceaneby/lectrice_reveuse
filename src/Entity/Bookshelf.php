@@ -30,7 +30,8 @@ class Bookshelf
     #[ORM\JoinColumn(nullable: false)]
     private ?Library $library = null;
 
-    #[ORM\ManyToMany(targetEntity: Book::class, mappedBy: 'bookshelves')]
+    #[ORM\ManyToMany(targetEntity: Book::class, inversedBy: 'bookshelves')]
+    #[ORM\JoinTable(name: "book_bookshelf")]
     private Collection $book;
 
     public function __construct()
