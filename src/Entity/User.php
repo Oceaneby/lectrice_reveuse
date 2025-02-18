@@ -232,7 +232,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-    public function getProfilPictures(): Collection
+    public function getProfilPicture(): Collection
     {
         return $this->profilPictures;
     }

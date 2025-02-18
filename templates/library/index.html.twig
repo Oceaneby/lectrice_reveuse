@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{# {% extends 'base.html.twig' %}
 
 {% block title %}Ma bibliothèque{% endblock %}
 
@@ -25,5 +25,59 @@
         </div>
     {% else %}
         <p>Aucune étagère dans votre bibliothèque.</p>
+    {% endif %}
+{% endblock %} #}
+
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Ma bibliothèque{% endblock %}
+
+{% block body %}
+    <h1>Ma bibliothèque</h1>
+
+    {% if library.bookshelves is not empty %}
+        <div class="bookshelves">
+            {% for bookshelf in library.bookshelves %}
+                <div class="bookshelf">
+                    <h2>{{ bookshelf.name }}</h2>
+                    <ul>
+                        {% for book in bookshelf.books %}
+                            <li>
+                                <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="Cover image" />
+                                <h3>{{ book.title }}</h3>
+                                <p>Auteur : {{ book.author.fullName }}</p>
+                                <p>Genre : {{ book.genre.name }}</p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Aucune étagère dans votre bibliothèque.</p>
+    {% endif %}
+
+    <h2>Livres non assignés à une étagère</h2>
+    {% set booksWithoutBookshelf = [] %}
+    {% for book in library.books %}
+        {% if book.bookshelves is empty %}
+            {% set booksWithoutBookshelf = booksWithoutBookshelf|merge([book]) %}
+        {% endif %}
+    {% endfor %}
+
+    {% if booksWithoutBookshelf is not empty %}
+        <ul>
+            {% for book in booksWithoutBookshelf %}
+                <li>
+                    <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="Cover image" />
+                    <h3>{{ book.title }}</h3>
+                    <p>Auteur : {{ book.author.fullName }}</p>
+                    <p>Genre : {{ book.genre.name }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun livre n'est actuellement sans étagère.</p>
     {% endif %}
 {% endblock %}

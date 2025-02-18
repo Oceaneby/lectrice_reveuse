@@ -19,7 +19,7 @@
 		<!-- Photo de profil -->
 		<div class="flex justify-center mb-6">
 			{% if app.user.profilPicture is not null %}
-				<img src="{{ asset('uploads/profil_pictures/' ~ app.user.profilPicture.imageUrl) }}" alt="Photo de profil" class="w-32 h-32 rounded-full object-cover border-2 border-gray-300" id="profilePicturePreview">
+				<img src="{{ asset('uploads/profil_pictures/' ~ app.user.profilPicture[0].getImageUrl) }}" alt="Photo de profil" class="w-32 h-32 rounded-full object-cover border-2 border-gray-300" id="profilePicturePreview">
 			{% else %}
 				<div class="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center text-white text-xl font-semibold">
 					<span>Aucune</span>

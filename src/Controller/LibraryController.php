@@ -25,6 +25,7 @@ final class LibraryController extends AbstractController
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
+
         $library = $libraryRepository->findBy(['user' => $user]);
         if (!$library) {
             return $this->render('library/empty.html.twig');
@@ -32,10 +33,13 @@ final class LibraryController extends AbstractController
         // Vérifie si la bibliothèque a des étagères
         $library = $libraryRepository->findOneBy(['user' => $user]);
         $bookshelve = $library->getBookshelves();
+        $book = $library->getBooks();
+       
 
         return $this->render('library/index.html.twig', [
             'library' => $library,
-            'bookshelve' => $bookshelve
+            'bookshelve' => $bookshelve,
+            'books' => $book,
         ]);
     }
 
@@ -52,9 +56,21 @@ final class LibraryController extends AbstractController
             throw $this->createNotFoundException('Le livre demandé n\'existe pas.');
         }
 
+         // Récupérer la bibliothèque de l'utilisateur
+         $library = $em->getRepository(Library::class)->findOneBy(['user' => $user]);
+         if (!$library) {
+             // Si l'utilisateur n'a pas de bibliothèque, créer une nouvelle entrée
+             $library = new Library();
+             $library->setUser($user);
+         }
+
         // Vérifier si le livre est déjà dans la bibliothèque de l'utilisateur
-        $existingLibraryEntry = $em->getRepository(Library::class)->findOneBy(['user' => $user, 'books' => $book]);
-        if ($existingLibraryEntry) {
+        // $existingLibraryEntry = $em->getRepository(Library::class)->findOneBy(['user' => $user, 'books' => $book]);
+        // if ($existingLibraryEntry) {
+        //     $this->addFlash('info', 'Le livre est déjà dans votre bibliothèque.');
+        //     return $this->redirectToRoute('app_library');
+        // }
+        if ($library->getBooks()->contains($book)) {
             $this->addFlash('info', 'Le livre est déjà dans votre bibliothèque.');
             return $this->redirectToRoute('app_library');
         }
@@ -64,6 +80,7 @@ final class LibraryController extends AbstractController
             ->addBook($book)
             ->setAddedDate(new \DateTime());
 
+        $em->persist($book);
         $em->persist($libraryEntry);
         $em->flush();
 

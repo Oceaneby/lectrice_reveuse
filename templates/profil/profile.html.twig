@@ -9,8 +9,8 @@
 
     <!-- Photo de profil et titre centré -->
     <div class="flex flex-col items-center justify-center mb-6">
-        {% if app.user.profilPicture is not null %}
-            <img src="{{ asset('uploads/profil_pictures/' ~ app.user.profilPicture.imageUrl) }}" alt="Photo de profil" class="w-32 h-32 rounded-full object-cover mb-4">
+        {% if app.user.profilPicture | length > 0 %}
+            <img src="{{ asset('uploads/profil_pictures/' ~ app.user.profilPicture[0].getImageUrl) }}" alt="Photo de profil" class="w-32 h-32 rounded-full object-cover mb-4">
         {% else %}
             <div class="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center text-white text-xl font-semibold mb-4">
                 <span>Aucune</span>
