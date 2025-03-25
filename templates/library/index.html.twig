@@ -52,7 +52,13 @@
                                         <div class="flex flex-col">
                                             <h3 class="text-lg font-semibold text-gray-800">{{ book.title }}</h3>
                                             <p class="text-sm text-gray-600">Auteur : {{ book.author.fullName }}</p>
-                                            <p class="text-sm text-gray-500">Genre : {{ book.genre.name }}</p>
+
+                                            {# Affichage des genres du livre (plusieurs genres possibles) #}
+                                            <p class="text-sm text-gray-500">Genres : 
+                                                {% for genre in book.genres %}
+                                                    <span>{{ genre.name }}</span>{% if not loop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </p>
                                         </div>
                                     </li>
                                 {% endfor %}
@@ -66,7 +72,7 @@
         {% endif %}
 
         <h2 class="text-2xl font-semibold text-center text-indigo-600 mt-12 mb-6">Livres non assignés à une étagère</h2>
-        
+
         {% set booksWithoutBookshelf = [] %}
         {% for book in library.books %}
             {% if book.bookshelves is empty %}
@@ -83,7 +89,14 @@
                             <div class="flex flex-col">
                                 <h3 class="text-lg font-semibold text-gray-800">{{ book.title }}</h3>
                                 <p class="text-sm text-gray-600">Auteur : {{ book.author.fullName }}</p>
-                                <p class="text-sm text-gray-500">Genre : {{ book.genre.name }}</p>
+
+                                {# Affichage des genres du livre (plusieurs genres possibles) #}
+                                <p class="text-sm text-gray-500">Genres : 
+                                    {% for genre in book.genres %}
+                                        <span>{{ genre.name }}</span>{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </p>
+
                                 <form action="{{ path('app_library_add_to_shelf', {bookId: book.id}) }}" method="post" class="mt-4">
                                     <select name="shelfId" class="bg-indigo-100 border border-indigo-300 rounded-lg py-2 px-4 mb-2">
                                         {% for shelf in library.bookshelves %}

@@ -36,9 +36,9 @@ class Book
     #[ORM\JoinColumn(nullable: false)]
     private ?Author $author = null;
 
-    #[ORM\ManyToOne(inversedBy: 'books')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Genre $genre = null;
+    #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'books')]
+    #[ORM\JoinTable(name: "book_genres")]
+    private Collection $genres;
 
     #[ORM\ManyToOne(inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
@@ -67,6 +67,7 @@ class Book
         $this->libraries = new ArrayCollection();
         $this->reviews = new ArrayCollection();
         $this->bookshelves = new ArrayCollection();
+        $this->genres = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -152,14 +153,23 @@ class Book
         return $this;
     }
 
-    public function getGenre(): ?Genre
+    public function getGenres(): Collection
     {
-        return $this->genre;
+        return $this->genres;
     }
 
-    public function setGenre(?Genre $genre): static
+    public function addGenre(Genre $genre): self
     {
-        $this->genre = $genre;
+        if (!$this->genres->contains($genre)) {
+            $this->genres[] = $genre;
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): self
+    {
+        $this->genres->removeElement($genre);
 
         return $this;
     }

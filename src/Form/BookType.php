@@ -55,9 +55,11 @@ class BookType extends AbstractType
                 'choice_label' => 'first_name',
                 'attr' => ['class' => 'block w-25 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
             ])
-            ->add('genre', EntityType::class, [
+            ->add('genres', EntityType::class, [
                 'class' => Genre::class,
                 'choice_label' => 'name',
+                'multiple' => true,
+                'expanded' => true,
                 'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
             ])
             ->add('publisher', EntityType::class, [
