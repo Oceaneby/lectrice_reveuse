@@ -34,50 +34,71 @@
 {% block title %}Ma bibliothèque{% endblock %}
 
 {% block body %}
-    <h1>Ma bibliothèque</h1>
+    <div class="max-w-7xl mx-auto px-6 py-12">
+        <h1 class="text-4xl font-bold text-center text-indigo-600 mb-12">Ma bibliothèque</h1>
 
-    {% if library.bookshelves is not empty %}
-        <div class="bookshelves">
-            {% for bookshelf in library.bookshelves %}
-                <div class="bookshelf">
-                    <h2>{{ bookshelf.name }}</h2>
-                    <ul>
-                        {% for book in bookshelf.books %}
-                            <li>
-                                <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="Cover image" />
-                                <h3>{{ book.title }}</h3>
-                                <p>Auteur : {{ book.author.fullName }}</p>
-                                <p>Genre : {{ book.genre.name }}</p>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>Aucune étagère dans votre bibliothèque.</p>
-    {% endif %}
-
-    <h2>Livres non assignés à une étagère</h2>
-    {% set booksWithoutBookshelf = [] %}
-    {% for book in library.books %}
-        {% if book.bookshelves is empty %}
-            {% set booksWithoutBookshelf = booksWithoutBookshelf|merge([book]) %}
+        {% if library.bookshelves is not empty %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for bookshelf in library.bookshelves %}
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden group hover:scale-105 transition-transform duration-300">
+                        <div class="bg-indigo-500 text-white p-6">
+                            <h2 class="text-2xl font-semibold">{{ bookshelf.shelfName }}</h2>
+                        </div>
+                        <div class="p-6">
+                            <ul class="space-y-4">
+                                {% for book in bookshelf.books %}
+                                    <li class="flex items-center space-x-4">
+                                        <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="Cover image" class="w-24 h-32 object-cover rounded-lg shadow-md" />
+                                        <div class="flex flex-col">
+                                            <h3 class="text-lg font-semibold text-gray-800">{{ book.title }}</h3>
+                                            <p class="text-sm text-gray-600">Auteur : {{ book.author.fullName }}</p>
+                                            <p class="text-sm text-gray-500">Genre : {{ book.genre.name }}</p>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center text-gray-600">Aucune étagère dans votre bibliothèque.</p>
         {% endif %}
-    {% endfor %}
 
-    {% if booksWithoutBookshelf is not empty %}
-        <ul>
-            {% for book in booksWithoutBookshelf %}
-                <li>
-                    <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="Cover image" />
-                    <h3>{{ book.title }}</h3>
-                    <p>Auteur : {{ book.author.fullName }}</p>
-                    <p>Genre : {{ book.genre.name }}</p>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Aucun livre n'est actuellement sans étagère.</p>
-    {% endif %}
+        <h2 class="text-2xl font-semibold text-center text-indigo-600 mt-12 mb-6">Livres non assignés à une étagère</h2>
+        
+        {% set booksWithoutBookshelf = [] %}
+        {% for book in library.books %}
+            {% if book.bookshelves is empty %}
+                {% set booksWithoutBookshelf = booksWithoutBookshelf|merge([book]) %}
+            {% endif %}
+        {% endfor %}
+
+        {% if booksWithoutBookshelf is not empty %}
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <ul class="space-y-4">
+                    {% for book in booksWithoutBookshelf %}
+                        <li class="flex items-center space-x-4">
+                            <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="Cover image" class="w-24 h-32 object-cover rounded-lg shadow-md" />
+                            <div class="flex flex-col">
+                                <h3 class="text-lg font-semibold text-gray-800">{{ book.title }}</h3>
+                                <p class="text-sm text-gray-600">Auteur : {{ book.author.fullName }}</p>
+                                <p class="text-sm text-gray-500">Genre : {{ book.genre.name }}</p>
+                                <form action="{{ path('app_library_add_to_shelf', {bookId: book.id}) }}" method="post" class="mt-4">
+                                    <select name="shelfId" class="bg-indigo-100 border border-indigo-300 rounded-lg py-2 px-4 mb-2">
+                                        {% for shelf in library.bookshelves %}
+                                            <option value="{{ shelf.id }}">{{ shelf.shelfName }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit" class="bg-indigo-600 text-white rounded-lg py-2 px-4 transition hover:bg-indigo-700">Ajouter à l'étagère</button>
+                                </form>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <p class="text-center text-gray-600">Aucun livre n'est actuellement sans étagère.</p>
+        {% endif %}
+    </div>
 {% endblock %}

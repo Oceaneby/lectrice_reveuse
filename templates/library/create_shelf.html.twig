@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une étagère{% endblock %}
+
+{% block body %}
+    <h1>Créer une étagère</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.shelfName) }}
+        <button type="submit">Créer l'étagère</button>
+    {{ form_end(form) }}
+{% endblock %}

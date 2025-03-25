@@ -23,7 +23,7 @@ class Library
     /**
      * @var Collection<int, Book>
      */
-    #[ORM\ManyToMany(targetEntity: Book::class, inversedBy: 'libraries')]
+    #[ORM\ManyToMany(targetEntity: Book::class, inversedBy: 'libraries', fetch: 'EAGER')]
     #[ORM\JoinTable(name: 'library_books')]
     private Collection $books;
 

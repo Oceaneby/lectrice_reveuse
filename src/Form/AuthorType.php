@@ -31,6 +31,7 @@ class AuthorType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => true,
                 'format' => 'yyyy-MM-dd',
+                'required' => false,
             ])
             ->add('nationality')
         ;

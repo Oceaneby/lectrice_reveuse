@@ -3,14 +3,16 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>
-			{% block title %}Bienvenue sur BookWorld!{% endblock %}
+			{% block title %}Bienvenue sur BookWorld!
+			{% endblock %}
 		</title>
 		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-		
+
 		{% block stylesheets %}
 			{{ encore_entry_link_tags('app') }}
 			<!-- Si TailwindCSS est installé, ajoute cette ligne -->
 			<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
 		{% endblock %}
 
 		{% block javascripts %}
@@ -20,62 +22,67 @@
 	<body>
 		<!-- Navbar -->
 		<nav class="bg-gray-900 text-white shadow-md py-4">
-			<div class="container mx-auto px-6 flex items-center justify-between">
+			<div
+				class="container mx-auto px-6 flex items-center justify-between">
 				<!-- Logo -->
 				<a href="{{ path('app_home')}}" class="text-2xl font-bold text-indigo-500">BookWorld</a>
-				
+
 				<!-- Menu -->
 				<div class="hidden md:flex space-x-8">
 					<a href="#activity" class="hover:text-indigo-400 transition">L'activité des livres</a>
 					<a href="#explore" class="hover:text-indigo-400 transition">Explorer</a>
 					<a href="#forum" class="hover:text-indigo-400 transition">Forum</a>
+					{% if app.user %}
+						<!-- Afficher "Ma bibliothèque" seulement si l'utilisateur est connecté -->
+						<a href="{{ path('app_library') }}" class="hover:text-indigo-400 transition">Ma bibliothèque</a>
+					{% endif %}
 					<a href="#contact" class="hover:text-indigo-400 transition">Contact</a>
 				</div>
 
 				<!-- Buttons for Sign Up / Login / Account -->
 				<div class="hidden md:flex items-center space-x-4">
-					<a href="{{ path('app_register')}}" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition">S'inscrire</a>
-					<a href="{{ path('app_login')}}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Se connecter</a>
-					<a href="{{ path('app_profile_index')}}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Mon compte</a>
-				</div>
+					{% if app.user %}
+						<!-- Si l'utilisateur est connecté, afficher "Se déconnecter" -->
+						<a href="{{ path('app_logout') }}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Se déconnecter</a>
+					{% else %}
+						<!-- Si l'utilisateur n'est pas connecté, afficher "S'inscrire" et "Se connecter" -->
+						<a href="{{ path('app_register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition">S'inscrire</a>
+						<a href="{{ path('app_login') }}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Se connecter</a>
+					{% endif %}
 
-				<!-- Mobile Menu Button -->
-				<div class="md:hidden flex items-center">
-					<button class="text-white focus:outline-none" id="menu-toggle">
-						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-						</svg>
-					</button>
+					<a href="{{ path('app_profile_index') }}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Mon compte</a>
 				</div>
 			</div>
 
-			<!-- Mobile Menu -->
-			<div class="md:hidden bg-gray-800 text-white" id="mobile-menu" style="display: none;">
-				<a href="#activity" class="block py-2 px-4 hover:bg-indigo-600">L'activité des livres</a>
-				<a href="#explore" class="block py-2 px-4 hover:bg-indigo-600">Explorer</a>
-				<a href="#forum" class="block py-2 px-4 hover:bg-indigo-600">Forum</a>
-				<a href="#contact" class="block py-2 px-4 hover:bg-indigo-600">Contact</a>
-				<a href="#signup" class="block py-2 px-4 hover:bg-indigo-600">S'inscrire</a>
-				<a href="#login" class="block py-2 px-4 hover:bg-indigo-600">Se connecter</a>
-				<a href="#account" class="block py-2 px-4 hover:bg-indigo-600">Mon compte</a>
+			<!-- Mobile Menu Button -->
+			<div class="md:hidden flex items-center">
+				<button class="text-white focus:outline-none" id="menu-toggle">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+					</svg>
+				</button>
 			</div>
-		</nav>
+		</div>
 
-		{% block body %}
-			<h1 class="text-3xl font-bold underline text-red-800">
-				Hello world!
-			</h1>
-		{% endblock %}
-
-		<!-- Script for Mobile Menu -->
-		<script>
-			// Toggle mobile menu
-			const menuButton = document.getElementById('menu-toggle');
-			const mobileMenu = document.getElementById('mobile-menu');
-			
-			menuButton.addEventListener('click', () => {
-				mobileMenu.style.display = mobileMenu.style.display === 'none' ? 'block' : 'none';
-			});
-		</script>
+		<!-- Mobile Menu -->
+		<div class="md:hidden bg-gray-800 text-white" id="mobile-menu" style="display: none;">
+			<a href="#activity" class="block py-2 px-4 hover:bg-indigo-600">L'activité des livres</a>
+			<a href="#explore" class="block py-2 px-4 hover:bg-indigo-600">Explorer</a>
+			<a href="#forum" class="block py-2 px-4 hover:bg-indigo-600">Forum</a>
+			<a href="#contact" class="block py-2 px-4 hover:bg-indigo-600">Contact</a>
+			<a href="#signup" class="block py-2 px-4 hover:bg-indigo-600">S'inscrire</a>
+			<a href="#login" class="block py-2 px-4 hover:bg-indigo-600">Se connecter</a>
+			<a href="#account" class="block py-2 px-4 hover:bg-indigo-600">Mon compte</a>
+		</div>
 	</body>
-</html>
+</html></nav>{% block body %}
+<h1 class="text-3xl font-bold underline text-red-800">
+	Hello world!
+</h1>{% endblock %}<!-- Script for Mobile Menu --><script>
+// Toggle mobile menu
+const menuButton = document.getElementById('menu-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+
+menuButton.addEventListener('click', () => {
+mobileMenu.style.display = mobileMenu.style.display === 'none' ? 'block' : 'none';
+});</script></body></html>

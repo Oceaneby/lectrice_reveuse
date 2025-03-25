@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\Image;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 
 class BookType extends AbstractType
@@ -32,8 +33,9 @@ class BookType extends AbstractType
             ->add('isbn', null, [
                 'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
             ])
-            ->add('publication_date', null, [
+            ->add('publication_date', DateType::class, [
                 'widget' => 'single_text',
+                'html5' => true,
                 'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
             ])
             ->add('cover_image', FileType::class, [
@@ -50,17 +52,17 @@ class BookType extends AbstractType
             
             ->add('author', EntityType::class, [
                 'class' => Author::class,
-                'choice_label' => 'id',
+                'choice_label' => 'first_name',
                 'attr' => ['class' => 'block w-25 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
             ])
             ->add('genre', EntityType::class, [
                 'class' => Genre::class,
-                'choice_label' => 'id',
+                'choice_label' => 'name',
                 'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
             ])
             ->add('publisher', EntityType::class, [
                 'class' => Publisher::class,
-                'choice_label' => 'id',
+                'choice_label' => 'name',
                 'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
             ]);
 

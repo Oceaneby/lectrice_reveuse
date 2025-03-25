@@ -6,6 +6,7 @@ use App\Entity\Publisher;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class PublisherType extends AbstractType
 {
@@ -17,7 +18,9 @@ class PublisherType extends AbstractType
             ->add('website')
             ->add('foundation_year')
             ->add('description')
-            ->add('logo')
+            ->add('logo',  FileType::class, [
+                'required' => false,
+                'mapped' => false,])
         ;
     }
 

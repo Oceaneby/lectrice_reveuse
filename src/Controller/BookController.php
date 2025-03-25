@@ -76,8 +76,12 @@ final class BookController extends AbstractController
     #[Route('/{id}', name: 'app_book_show', methods: ['GET'])]
     public function show(Book $book): Response
     {
+         // Vérification du rôle de l'utilisateur
+        $isAdmin = $this->isGranted('ROLE_ADMIN'); // Vérifie si l'utilisateur a le rôle d'admin
+
         return $this->render('book/show.html.twig', [
             'book' => $book,
+            'isAdmin' => $isAdmin, // On passe la variable isAdmin à la vue
         ]);
     }
 
