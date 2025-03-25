@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Form\BookType;
+use App\Form\BookSearchType;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,18 +14,57 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\File\File;
 
 #[Route('/book')]
 final class BookController extends AbstractController
 {
     #[Route(name: 'app_book_index', methods: ['GET'])]
-    public function index(BookRepository $bookRepository): Response
+    public function index(Request $request, BookRepository $bookRepository): Response
     {
+         // Création du formulaire de recherche
+         $form = $this->createForm(BookSearchType::class);
+         $form->handleRequest($request);
+ 
+         // Récupérer les résultats filtrés
+         $books = $bookRepository->findBySearch($form->getData());
+
         return $this->render('book/index.html.twig', [
-            'books' => $bookRepository->findAll(),
+            'books' => $books,
+            'form' => $form->createView(),
         ]);
     }
+
+    // Nouvelle route pour la recherche AJAX
+    #[Route('/search', name: 'app_book_search', methods: ['GET'])]
+    public function search(Request $request, BookRepository $bookRepository): Response
+    {
+        $query = $request->query->get('query');
+        $results = [];
+        
+        if ($query) {
+            // Recherche les livres
+            $books = $bookRepository->searchBooks($query);
+    
+            // Vérifie si des livres sont trouvés
+            dump($books);  // Utilise dump() pour voir les résultats de la recherche
+    
+            // Convertir les livres en un format simple
+            foreach ($books as $book) {
+                $results[] = [
+                    'id' => $book->getId(),
+                    'title' => $book->getTitle(),
+                    'author' => $book->getAuthor(),
+                ];
+            }
+        }
+        // $this->get('logger')->info('Search Results:', ['results' => $results]);
+        return new JsonResponse($results);  // Retourner les résultats au format JSON
+    }
+    
+
+    
 
     #[Route('/new', name: 'app_book_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
@@ -74,8 +114,12 @@ final class BookController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_book_show', methods: ['GET'])]
-    public function show(Book $book): Response
+    public function show(int $id, BookRepository $bookRepository, Book $book): Response
     {
+        $book = $bookRepository->find($id);
+        if (!$book) {
+            throw $this->createNotFoundException('Livre non trouvé');
+        }
          // Vérification du rôle de l'utilisateur
         $isAdmin = $this->isGranted('ROLE_ADMIN'); // Vérifie si l'utilisateur a le rôle d'admin
 

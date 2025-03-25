@@ -32,7 +32,10 @@
                         </div>
                         <div class="flex flex-col">
                             <span class="font-semibold text-gray-700">Genre :</span>
-                            <span class="text-gray-600">{{ book.genre.name }}</span>
+                            <span class="text-gray-600">
+                            {% for genre in book.genres %}
+                                {{ genre.name }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}</span>
                         </div>
                         <div class="flex flex-col">
                             <span class="font-semibold text-gray-700">Date de publication :</span>

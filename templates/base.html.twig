@@ -10,14 +10,13 @@
 
 		{% block stylesheets %}
 			{{ encore_entry_link_tags('app') }}
-			<!-- Si TailwindCSS est installé, ajoute cette ligne -->
 			<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
 		{% endblock %}
 
-		{% block javascripts %}
+		{# {% block javascripts %}
 			{{ encore_entry_script_tags('app') }}
-		{% endblock %}
+		{% endblock %} #}
 	</head>
 	<body>
 		<!-- Navbar -->
@@ -38,6 +37,16 @@
 					{% endif %}
 					<a href="#contact" class="hover:text-indigo-400 transition">Contact</a>
 				</div>
+
+				<div class="relative hidden md:block">
+					<form id="search-form" action="{{ path('app_book_index') }}" method="get" class="flex" onsubmit="event.preventDefault(); searchBooks();">
+    						<input type="text" id="search-input" name="query" placeholder="Recherche..." class="bg-gray-800 text-white px-4 py-2 rounded-l-lg focus:outline-none" oninput="searchBooks(event)">
+    						<button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-r-lg hover:bg-indigo-700">Rechercher</button>
+					</form>
+					<div id="search-results" class="absolute top-0 left-0 w-full mt-10 bg-gray-800 text-white shadow-lg rounded-md z-10 hidden cursor-pointer"></div>
+				</div>
+				
+				
 
 				<!-- Buttons for Sign Up / Login / Account -->
 				<div class="hidden md:flex items-center space-x-4">
@@ -76,13 +85,65 @@
 		</div>
 	</body>
 </html></nav>{% block body %}
-<h1 class="text-3xl font-bold underline text-red-800">
-	Hello world!
-</h1>{% endblock %}<!-- Script for Mobile Menu --><script>
-// Toggle mobile menu
-const menuButton = document.getElementById('menu-toggle');
-const mobileMenu = document.getElementById('mobile-menu');
+{% endblock %}
+{% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+        <script>
+            
+            function searchBooks(event) {
+                const query = document.getElementById('search-input').value;  // Récupère le texte du champ de recherche
+                const searchResults = document.getElementById('search-results'); // Élément pour afficher les résultats
 
-menuButton.addEventListener('click', () => {
-mobileMenu.style.display = mobileMenu.style.display === 'none' ? 'block' : 'none';
-});</script></body></html>
+                if (query.length > 5) {  // Commencer à rechercher seulement si la longueur de la recherche est supérieure à 2 caractères
+                    // Effectuer la requête AJAX
+					
+					
+                    	fetch('{{ path('app_book_search') }}?query=' + query, {
+                        	method: 'GET',
+                        	headers: {
+                            	'Accept': 'application/json', // Indiquer que la réponse attendue est en JSON
+                        	},
+                    	})
+                    .then(response => response.json())  // Convertir la réponse en JSON
+                    .then(data => {
+						console.log(data); 
+                        // Vider les anciens résultats
+                        searchResults.innerHTML = '';
+
+                        // Si des résultats sont trouvés
+                        if (data.length > 0) {
+                            data.forEach(book => {
+                                const bookElement = document.createElement('div');
+                                bookElement.classList.add('p-4', 'bg-gray-800', 'text-white', 'mb-2');
+                                bookElement.innerHTML = `<strong>${book.title}</strong> `;
+								 bookElement.onclick = function() {
+                            	window.location.href = `/book/${book.id}`;  // Rediriger vers la page du livre
+                        		};
+                                searchResults.appendChild(bookElement);
+                            });
+
+                            // Afficher la liste des résultats
+                            searchResults.classList.remove('hidden');
+                        } else {
+                            searchResults.classList.add('hidden');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la recherche :', error);
+                    });
+				
+                } else {
+                    searchResults.classList.add('hidden');  // Cacher les résultats si la recherche est trop courte
+                }
+            }
+        </script>
+    {% endblock %}
+{# // <script>
+
+// const menuButton = document.getElementById('menu-toggle');
+// const mobileMenu = document.getElementById('mobile-menu');
+
+// menuButton.addEventListener('click', () => {
+// mobileMenu.style.display = mobileMenu.style.display === 'none' ? 'block' : 'none';
+// });</script> #}
+</body></html>
