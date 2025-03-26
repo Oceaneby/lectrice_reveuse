@@ -62,6 +62,12 @@ class Book
     #[ORM\ManyToMany(targetEntity: Bookshelf::class, mappedBy:'book')]
     private Collection $bookshelves;
 
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $amazonUrl= null;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $fnacUrl = null;
+
     public function __construct()
     {
         $this->libraries = new ArrayCollection();
@@ -268,6 +274,27 @@ class Book
             $bookshelf->removeBook($this);
         }
 
+        return $this;
+    }
+    public function getAmazonUrl(): ?string
+    {
+        return $this->amazonUrl;
+    }
+
+    public function setAmazonUrl(?string $amazonUrl): self
+    {
+        $this->amazonUrl = $amazonUrl;
+        return $this;
+    }
+
+    public function getFnacUrl(): ?string
+    {
+        return $this->fnacUrl;
+    }
+
+    public function setFnacUrl(?string $fnacUrl): self
+    {
+        $this->fnacUrl = $fnacUrl;
         return $this;
     }
 }

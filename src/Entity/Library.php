@@ -92,9 +92,9 @@ class Library
     // Supprimer un livre de la bibliothèque
     public function removeBook(Book $book): static
     {
-       if ($this->books->removeElement($book)){
-        $book->removeLibrary($this);
-       };
+        if ($this->books->contains($book)) {
+            $this->books->removeElement($book); // Retirer le livre de la collection
+        }
 
         return $this;
     }

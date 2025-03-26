@@ -32,8 +32,6 @@ final class LibraryController extends AbstractController
         if (!$library) {
             return $this->render('library/empty.html.twig');
         }
-        // Vérifie si la bibliothèque a des étagères
-        // $library = $libraryRepository->findOneBy(['user' => $user]);
 
         $bookshelves = $library->getBookshelves();
         $book = $library->getBooks();
@@ -69,11 +67,6 @@ final class LibraryController extends AbstractController
         }
 
         // Vérifier si le livre est déjà dans la bibliothèque de l'utilisateur
-        // $existingLibraryEntry = $em->getRepository(Library::class)->findOneBy(['user' => $user, 'books' => $book]);
-        // if ($existingLibraryEntry) {
-        //     $this->addFlash('info', 'Le livre est déjà dans votre bibliothèque.');
-        //     return $this->redirectToRoute('app_library');
-        // }
         if ($library->getBooks()->contains($book)) {
             $this->addFlash('info', 'Le livre est déjà dans votre bibliothèque.');
             return $this->redirectToRoute('app_library');
@@ -99,12 +92,28 @@ final class LibraryController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $libraryEntry = $em->getRepository(Library::class)->findOneBy(['user' => $user, 'books' => $bookId]);
-        if (!$libraryEntry) {
-            throw $this->createNotFoundException('Ce livre ne fait pas partie de votre bibliothèque.');
+        // Récupérer la bibliothèque de l'utilisateur
+        $library = $em->getRepository(Library::class)->findOneBy(['user' => $user]);
+        if (!$library) {
+            throw $this->createNotFoundException('Votre bibliothèque n\'existe pas.');
         }
-        $libraryEntry->removeBook($bookId);
-        $em->remove($libraryEntry);
+
+        // Récupérer le livre
+        $book = $em->getRepository(Book::class)->find($bookId);
+        if (!$book) {
+            throw $this->createNotFoundException('Le livre demandé n\'existe pas.');
+        }
+
+        // Vérifier si le livre fait partie de la bibliothèque
+        if (!$library->getBooks()->contains($book)) {
+            throw $this->createNotFoundException('Le livre ne fait pas partie de votre bibliothèque.');
+        }
+
+        // Retirer l'association du livre avec la bibliothèque
+
+        $library->removeBook($book);
+
+        $em->persist($library);
         $em->flush();
 
         $this->addFlash('success', 'Le livre a été retiré de votre bibliothèque.');
@@ -165,7 +174,7 @@ final class LibraryController extends AbstractController
         ]);
     }
 
- 
+
 
     #[Route('/library/add-to-shelf/{bookId}', name: 'app_library_add_to_shelf', methods: ['POST'])]
     public function addBookToShelf(int $bookId, Request $request, BookRepository $bookRepository, EntityManagerInterface $em): Response
@@ -178,13 +187,13 @@ final class LibraryController extends AbstractController
 
         $shelfId = $request->request->get('shelfId');
 
-          // Vérifier si l'utilisateur a des étagères
-    $library = $em->getRepository(Library::class)->findOneBy(['user' => $user]);
-    if (!$library || $library->getBookshelves()->isEmpty()) {
-        // S'il n'a pas d'étagères, redirige vers la page de création d'étagère
-        $this->addFlash('error', 'Vous devez d\'abord créer une étagère avant d\'ajouter un livre.');
-        return $this->redirectToRoute('app_library_create_shelf');  // Assure-toi que cette route existe
-    }
+        // Vérifier si l'utilisateur a des étagères
+        $library = $em->getRepository(Library::class)->findOneBy(['user' => $user]);
+        if (!$library || $library->getBookshelves()->isEmpty()) {
+            // S'il n'a pas d'étagères, redirige vers la page de création d'étagère
+            $this->addFlash('error', 'Vous devez d\'abord créer une étagère avant d\'ajouter un livre.');
+            return $this->redirectToRoute('app_library_create_shelf');  // Assure-toi que cette route existe
+        }
 
         // Récupérer le livre et l'étagère par leurs ID
         $book = $bookRepository->find($bookId);
@@ -195,7 +204,7 @@ final class LibraryController extends AbstractController
             throw $this->createNotFoundException('Le livre ou l\'étagère demandé n\'existe pas.');
         }
 
-        
+
 
         // Vérifier que l'étagère appartient bien à la bibliothèque de l'utilisateur
         $library = $shelf->getLibrary();
@@ -213,6 +222,74 @@ final class LibraryController extends AbstractController
         // Ajouter un message flash de succès et rediriger vers la bibliothèque
         $this->addFlash('success', 'Le livre a été ajouté à l\'étagère.');
 
+        return $this->redirectToRoute('app_library');
+    }
+
+    #[Route('/library/remove-from-shelf/{bookId}/{shelfId}', name: 'app_library_remove_from_shelf', methods: ['POST'])]
+    public function removeBookFromShelf(int $bookId, int $shelfId, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Récupérer la bibliothèque de l'utilisateur et l'étagère
+        $shelf = $em->getRepository(Bookshelf::class)->find($shelfId);
+        $book = $em->getRepository(Book::class)->find($bookId);
+
+        if (!$shelf || !$book) {
+            throw $this->createNotFoundException('L\'étagère ou le livre n\'existe pas.');
+        }
+
+        // Vérifier que l'étagère appartient à l'utilisateur
+        if ($shelf->getLibrary()->getUser() !== $user) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à modifier cette étagère.');
+        }
+
+        // Retirer le livre de l'étagère
+        $shelf->removeBook($book);
+
+
+        $em->persist($shelf);
+        $em->flush();
+
+        $this->addFlash('success', 'Le livre a été retiré de l\'étagère.');
+        return $this->redirectToRoute('app_library');
+    }
+    #[Route('/library/move-to-shelf/{bookId}', name: 'app_library_move_to_shelf', methods: ['POST'])]
+    public function moveBookToShelf(int $bookId, Request $request, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Récupérer le livre et l'étagère cible
+        $book = $em->getRepository(Book::class)->find($bookId);
+        $shelfId = $request->request->get('shelfId');
+        $newShelf = $em->getRepository(Bookshelf::class)->find($shelfId);
+
+        if (!$book || !$newShelf) {
+            throw $this->createNotFoundException('Le livre ou l\'étagère n\'existe pas.');
+        }
+
+        // Vérifier que l'étagère cible appartient à la bibliothèque de l'utilisateur
+        if ($newShelf->getLibrary()->getUser() !== $user) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à déplacer un livre dans cette étagère.');
+        }
+
+        // Retirer le livre de l'étagère actuelle et l'ajouter à la nouvelle
+        foreach ($book->getBookshelves() as $currentShelf) {
+            $currentShelf->removeBook($book);
+        }
+
+        $newShelf->addBook($book);
+
+        // Persister les changements
+        $em->persist($newShelf);
+        $em->flush();
+
+        $this->addFlash('success', 'Le livre a été déplacé vers l\'étagère.');
         return $this->redirectToRoute('app_library');
     }
 }

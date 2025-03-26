@@ -20,6 +20,11 @@
         <h2 class="text-2xl font-medium mb-4">Mes informations personnelles</h2>
         <p class="text-lg text-gray-700">{{ app.user.username }}</p>
     </div>
+    <div class="text-center mt-6">
+        <a href="{{ path('profile_edit') }}" class="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out">
+            Modifier le profil
+        </a>
+    </div>
 
     <!-- Section des étagères de livres -->
     <div class="relative mt-8">
@@ -28,7 +33,7 @@
     <!-- Grille des étagères -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
         {% for bookshelf in app.user.bookshelves %}
-            <div class="relative rounded-lg shadow-xl transform transition-all hover:scale-105 hover:shadow-2xl duration-300 p-4"
+            <div class="relative rounded-lg shadow-xl overflow-hidden group transform transition-all hover:scale-105 hover:shadow-2xl duration-300 p-4"
                 style="background-image: url('{{ asset('images/bookshelves.png') }}'); background-size: cover; background-position: center; min-height: 500px;">
                 <!-- Nom de l'étagère -->
                 <h3 class="text-xl font-semibold text-center mb-4">{{ bookshelf.shelfName }}</h3>
@@ -68,10 +73,6 @@
 </div>
 
     <!-- Modifier le profil -->
-    <div class="text-center mt-6">
-        <a href="{{ path('profile_edit') }}" class="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out">
-            Modifier le profil
-        </a>
-    </div>
+    
 </div>
 {% endblock %}

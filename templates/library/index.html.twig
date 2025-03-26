@@ -1,34 +1,3 @@
-{# {% extends 'base.html.twig' %}
-
-{% block title %}Ma bibliothèque{% endblock %}
-
-{% block body %}
-    <h1>Ma bibliothèque</h1>
-
-    {% if library.bookshelves is not empty %}
-        <div class="bookshelves">
-            {% for bookshelf in library.bookshelves %}
-                <div class="bookshelf">
-                    <h2>{{ bookshelf.name }}</h2>
-                    <ul>
-                        {% for book in bookshelf.books %}
-                            <li>
-                                <img src="{{ asset('uploads/book_covers/' ~ book.cover_image_url) }}" alt="Cover image" />
-                                <h3>{{ book.title }}</h3>
-                                <p>Auteur : {{ book.author.fullName }}</p>
-                                <p>Genre : {{ book.genre.name }}</p>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>Aucune étagère dans votre bibliothèque.</p>
-    {% endif %}
-{% endblock %} #}
-
-
 {% extends 'base.html.twig' %}
 
 {% block title %}Ma bibliothèque{% endblock %}
@@ -36,6 +5,11 @@
 {% block body %}
     <div class="max-w-7xl mx-auto px-6 py-12">
         <h1 class="text-4xl font-bold text-center text-indigo-600 mb-12">Ma bibliothèque</h1>
+
+        {# Ajouter le bouton "Ajouter une étagère" ici #}
+        <div class="text-center mb-6">
+            <a href="{{ path('app_library_create_shelf') }}" class="bg-green-600 text-white rounded-lg py-2 px-6 transition hover:bg-green-700">Ajouter une étagère</a>
+        </div>
 
         {% if library.bookshelves is not empty %}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -60,6 +34,11 @@
                                                 {% endfor %}
                                             </p>
                                         </div>
+
+                                        {# Formulaire pour supprimer le livre de l'étagère #}
+                                        <form action="{{ path('app_library_remove_from_shelf', {bookId: book.id, shelfId: bookshelf.id}) }}" method="post">
+                                            <button type="submit" class="bg-red-600 text-white rounded-lg py-2 px-4 transition hover:bg-red-700">Retirer de l'étagère</button>
+                                        </form>
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -97,6 +76,7 @@
                                     {% endfor %}
                                 </p>
 
+                                {# Formulaire pour ajouter le livre à une étagère #}
                                 <form action="{{ path('app_library_add_to_shelf', {bookId: book.id}) }}" method="post" class="mt-4">
                                     <select name="shelfId" class="bg-indigo-100 border border-indigo-300 rounded-lg py-2 px-4 mb-2">
                                         {% for shelf in library.bookshelves %}
@@ -104,6 +84,11 @@
                                         {% endfor %}
                                     </select>
                                     <button type="submit" class="bg-indigo-600 text-white rounded-lg py-2 px-4 transition hover:bg-indigo-700">Ajouter à l'étagère</button>
+                                </form>
+
+                                {# Formulaire pour supprimer le livre de la bibliothèque #}
+                                <form action="{{ path('app_library_remove', {bookId: book.id}) }}" method="post" class="mt-4">
+                                    <button type="submit" class="bg-red-600 text-white rounded-lg py-2 px-4 transition hover:bg-red-700">Supprimer de la bibliothèque</button>
                                 </form>
                             </div>
                         </li>

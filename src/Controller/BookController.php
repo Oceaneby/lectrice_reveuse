@@ -28,7 +28,7 @@ final class BookController extends AbstractController
          $form->handleRequest($request);
  
          // Récupérer les résultats filtrés
-         $books = $bookRepository->findBySearch($form->getData());
+         $books = $bookRepository->searchBooks($form->getData()['query'] ?? '');
 
         return $this->render('book/index.html.twig', [
             'books' => $books,
@@ -48,7 +48,7 @@ final class BookController extends AbstractController
             $books = $bookRepository->searchBooks($query);
     
             // Vérifie si des livres sont trouvés
-            dump($books);  // Utilise dump() pour voir les résultats de la recherche
+            dump($books);  
     
             // Convertir les livres en un format simple
             foreach ($books as $book) {
@@ -59,8 +59,8 @@ final class BookController extends AbstractController
                 ];
             }
         }
-        // $this->get('logger')->info('Search Results:', ['results' => $results]);
-        return new JsonResponse($results);  // Retourner les résultats au format JSON
+        
+        return new JsonResponse($results);  
     }
     
 
@@ -135,7 +135,7 @@ final class BookController extends AbstractController
         // dump($book->getId());
         
         // Exemple d'ajout d'un fichier existant dans le formulaire
-    $cover_imagePath = $book->getCoverImage(); // Récupérer le nom du fichier enregistré en base de données
+    $cover_imagePath = $book->getCoverImage();
     if ($cover_imagePath) {
         // Créer un objet File avec le chemin du fichier
         $cover_imageFile = new File($this->getParameter('book_cover_directory') . '/' . $cover_imagePath);
@@ -151,7 +151,7 @@ final class BookController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // $cover_image = $book->getCoverImage();
+          
             $cover_image = $form->get('cover_image')->getData();
 
             if ($cover_image) {
@@ -163,13 +163,11 @@ final class BookController extends AbstractController
                
 
                 try {
-                    // Déplace le fichier dans le répertoire 'uploads/book_cover/'
                     $cover_image->move(
                         $this->getParameter('book_cover_directory'), // Configurer le répertoire dans services.yaml
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    // Gérer l'erreur si l'image ne peut pas être déplacée
                     $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image.');
                     return $this->redirectToRoute('book_new');
                 }

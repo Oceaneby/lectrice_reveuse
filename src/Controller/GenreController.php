@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Genre;
 use App\Form\GenreType;
+use App\Repository\BookRepository;
 use App\Repository\GenreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,6 +20,17 @@ final class GenreController extends AbstractController
     {
         return $this->render('genre/index.html.twig', [
             'genres' => $genreRepository->findAll(),
+        ]);
+    }
+
+    #[Route('/genre/{genre}', name: 'app_books_by_genre', methods: ['GET', 'POST'])]
+    public function bookByGenre(string $genre, BookRepository $bookRepository): Response
+    {
+        $books = $bookRepository->findByGenre($genre);
+
+        return $this->render('genre/genre.html.twig', [
+            'books' => $books,
+            'genre' => $genre,
         ]);
     }
 

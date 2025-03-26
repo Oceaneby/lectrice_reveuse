@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\Image;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Form\CallbackTransformer;
@@ -37,6 +38,14 @@ class BookType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => true,
                 'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
+            ])
+            ->add('amazonUrl', TextType::class, [
+                'required' => false,
+                'label' => 'Amazon URL',
+            ])
+            ->add('fnacUrl', TextType::class, [
+                'required' => false,
+                'label' => 'Fnac URL',
             ])
             ->add('cover_image', FileType::class, [
                 'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500'],
@@ -68,14 +77,8 @@ class BookType extends AbstractType
                 'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
             ]);
 
-       
-           
     }
-     
     
-    
-   
-
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

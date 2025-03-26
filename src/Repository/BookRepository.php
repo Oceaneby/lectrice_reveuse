@@ -25,6 +25,16 @@ class BookRepository extends ServiceEntityRepository
                     ->getQuery()
                     ->getResult();
     }
+
+    public function findByGenre(string $genre)
+{
+    return $this->createQueryBuilder('b')
+                ->innerJoin('b.genres', 'g')  // On suppose une relation Many-to-Many avec Genre
+                ->where('g.name = :genre')
+                ->setParameter('genre', $genre)
+                ->getQuery()
+                ->getResult();
+}
    
 }
 

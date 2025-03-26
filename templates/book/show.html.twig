@@ -5,22 +5,15 @@
 {% block body %}
     <div class="container mx-auto p-8">
         <div class="bg-white p-6 rounded-lg shadow-lg">
-            <!-- Conteneur pour la couverture et le résumé -->
             <div class="flex flex-col md:flex-row">
-                <!-- Couverture du livre à gauche -->
                 <div class="flex-none w-full md:w-1/3">
                     <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="{{ book.title }}" class="w-full h-auto rounded-lg shadow-lg">
                 </div>
 
-                <!-- Résumé et informations à droite -->
                 <div class="md:ml-6 mt-4 md:mt-0 flex flex-col justify-between w-full md:w-2/3">
-                    <!-- Titre du livre -->
                     <h1 class="text-4xl font-semibold text-gray-800">{{ book.title }}</h1>
-
-                    <!-- Résumé du livre -->
                     <p class="text-lg mt-4 text-gray-600">{{ book.description }}</p>
 
-                    <!-- Informations supplémentaires -->
                     <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div class="flex flex-col">
                             <span class="font-semibold text-gray-700">Auteur :</span>
@@ -33,9 +26,10 @@
                         <div class="flex flex-col">
                             <span class="font-semibold text-gray-700">Genre :</span>
                             <span class="text-gray-600">
-                            {% for genre in book.genres %}
-                                {{ genre.name }}{% if not loop.last %}, {% endif %}
-                            {% endfor %}</span>
+                                {% for genre in book.genres %}
+                                    {{ genre.name }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </span>
                         </div>
                         <div class="flex flex-col">
                             <span class="font-semibold text-gray-700">Date de publication :</span>
@@ -49,18 +43,29 @@
                         {% endif %}
                     </div>
 
-                    <!-- Liens pour acheter le livre -->
+                    <!-- Ajout d'un conteneur flex pour les boutons -->
                     <div class="mt-6 flex space-x-4">
-                        <a href="https://www.amazon.fr/Mad-majesty-Delinda-Dane-ebook/dp/B0D7Q7LQ2S/ref=sr_1_1?crid=2NVD2GUJM99NG&dib=eyJ2IjoiMSJ9.kxQ2AthFO2JOW3AobdJTcO7mGqUEd1XH7qj5pefJk4X3DohP6CoC2mqbD1QIR1Q2wJojqGe7xbf88qjMfYOPZQ.Ueylky2j1dbjnihWS8Hjl8LQjWE--thgsNw4nwNhZow&dib_tag=se&keywords=mad+majesty+tome+1&qid=1742831103&sprefix=mad+ma%2Caps%2C111&sr=8-1" target="_blank" class="bg-yellow-400 text-black px-6 py-2 rounded-md hover:bg-yellow-500 transition duration-300 text-lg text-center">
-                            Acheter sur Amazon
-                        </a>
-                        <a href="https://www.fnac.com/SearchResult/ResultList.aspx?Search=mad+majesty&sft=1&sa=1" target="_blank" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-300 text-lg text-center">
-                            Acheter sur Fnac
-                        </a>
+                        {% if book.amazonUrl %}
+                            <a href="{{ book.amazonUrl }}" target="_blank" class="bg-yellow-400 text-black px-6 py-2 rounded-md hover:bg-yellow-500 transition duration-300 text-lg text-center">
+                                Acheter sur Amazon
+                            </a>
+                        {% endif %}
+                        {% if book.fnacUrl %}
+                            <a href="{{ book.fnacUrl }}" target="_blank" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-300 text-lg text-center">
+                                Acheter sur Fnac
+                            </a>
+                        {% endif %}
+                        {% if app.user %}
+                            <!-- Bouton d'ajout à la bibliothèque si l'utilisateur est connecté -->
+                            <form action="{{ path('app_library_add', {'bookId': book.id}) }}" method="POST" class="flex items-center">
+                                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-300 text-lg text-center">
+                                    Ajouter à ma bibliothèque
+                                </button>
+                            </form>
+                        {% endif %}
                     </div>
 
                     {% if isAdmin %}
-                        <!-- Afficher un bouton de modification si l'utilisateur est admin -->
                         <div class="mt-6 text-center">
                             <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300">
                                 Modifier ce livre
@@ -71,7 +76,6 @@
             </div>
         </div>
 
-        <!-- Retour à la liste des livres -->
         <div class="mt-8 text-center">
             <a href="{{ path('app_home') }}" class="text-blue-500 hover:underline text-lg">
                 Retour à la liste des livres
