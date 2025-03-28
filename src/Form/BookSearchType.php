@@ -30,7 +30,7 @@ class BookSearchType extends AbstractType
             ->add('genres', EntityType::class, [
                 'class' => Genre::class,
                 'choice_label' => 'name',
-                'multiple' => true,  // Permet de choisir plusieurs genres
+                'multiple' => true,  
                 'required' => false,
                 'placeholder' => 'Genres',
             ])
@@ -44,7 +44,7 @@ class BookSearchType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Book::class,
-            'method' => 'GET', // Utiliser GET pour que l'URL contienne les paramètres de recherche
+            'method' => 'GET', 
         ]);
     }
 }

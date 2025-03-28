@@ -3,9 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Book;
+use App\Entity\Review;
 use App\Form\BookType;
+
 use App\Form\BookSearchType;
+use App\Form\ReviewType;
 use App\Repository\BookRepository;
+use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +24,7 @@ use Symfony\Component\HttpFoundation\File\File;
 #[Route('/book')]
 final class BookController extends AbstractController
 {
+    
     #[Route(name: 'app_book_index', methods: ['GET'])]
     public function index(Request $request, BookRepository $bookRepository): Response
     {
@@ -59,13 +64,9 @@ final class BookController extends AbstractController
                 ];
             }
         }
-        
         return new JsonResponse($results);  
     }
     
-
-    
-
     #[Route('/new', name: 'app_book_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
@@ -74,7 +75,6 @@ final class BookController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // $cover_image = $book->getCoverImage();
             $cover_image = $form->get('cover_image')->getData();
 
             if ($cover_image) {
@@ -82,9 +82,6 @@ final class BookController extends AbstractController
                 $originalFilename = pathinfo($cover_image->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$cover_image->guessExtension();
-
-               
-
                 try {
                     // Déplace le fichier dans le répertoire 'uploads/book_cover/'
                     $cover_image->move(
@@ -96,7 +93,6 @@ final class BookController extends AbstractController
                     $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image.');
                     return $this->redirectToRoute('book_new');
                 }
-
                 // Enregistrer le nom du fichier dans la base de données
                 $book->setCoverImage($newFilename);
             }
@@ -113,31 +109,48 @@ final class BookController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_book_show', methods: ['GET'])]
-    public function show(int $id, BookRepository $bookRepository, Book $book): Response
+    #[Route('/{id}', name: 'app_book_show', methods: ['GET', 'POST'])]
+    public function show(int $id, BookRepository $bookRepository, Book $book, ReviewRepository $reviewRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $book = $bookRepository->find($id);
-        if (!$book) {
-            throw $this->createNotFoundException('Livre non trouvé');
-        }
+        $reviews = $reviewRepository->findBy(['book' => $book], ['review_date' => 'DESC']);
+         // Création du formulaire de commentaire
+         $review = new Review();
+         $form = $this->createForm(ReviewType::class, $review);
+         $form->handleRequest($request);
+ 
+         if ($form->isSubmitted() && $form->isValid()) {
+             // Associer le livre et l'utilisateur au commentaire
+             $review->setBook($book);
+             $review->setUser($this->getUser()); 
+             $review->setReviewDate(new \DateTime());
+ 
+             // Enregistrer la revue dans la base de données
+             $entityManager->persist($review);
+             $entityManager->flush();
+ 
+             // Ajouter un message flash pour signaler le succès
+             $this->addFlash('success', 'Commentaire ajouté avec succès!');
+             return $this->redirectToRoute('app_book_show', ['id' => $book->getId()]);
+         }
+ 
          // Vérification du rôle de l'utilisateur
-        $isAdmin = $this->isGranted('ROLE_ADMIN'); // Vérifie si l'utilisateur a le rôle d'admin
-
-        return $this->render('book/show.html.twig', [
-            'book' => $book,
-            'isAdmin' => $isAdmin, // On passe la variable isAdmin à la vue
-        ]);
+         $isAdmin = $this->isGranted('ROLE_ADMIN');  
+ 
+         return $this->render('book/show.html.twig', [
+             'book' => $book,
+             'isAdmin' => $isAdmin, 
+             'reviews' => $reviews, 
+             'form' => $form->createView(), 
+         ]);
     }
 
     #[Route('/{id}/edit', name: 'app_book_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Book $book, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         // dump($book->getId());
-        
-        // Exemple d'ajout d'un fichier existant dans le formulaire
+      
     $cover_imagePath = $book->getCoverImage();
     if ($cover_imagePath) {
-        // Créer un objet File avec le chemin du fichier
         $cover_imageFile = new File($this->getParameter('book_cover_directory') . '/' . $cover_imagePath);
         
         // Remettre ce fichier dans le formulaire
@@ -147,32 +160,23 @@ final class BookController extends AbstractController
         // Créer le formulaire si aucun fichier n'est trouvé
         $form = $this->createForm(BookType::class, $book);
     }
-
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
-          
             $cover_image = $form->get('cover_image')->getData();
-
             if ($cover_image) {
                 // Créer un nom de fichier unique basé sur le slug du titre et un identifiant unique
                 $originalFilename = pathinfo($cover_image->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$cover_image->guessExtension();
-
-               
-
                 try {
                     $cover_image->move(
-                        $this->getParameter('book_cover_directory'), // Configurer le répertoire dans services.yaml
+                        $this->getParameter('book_cover_directory'), 
                         $newFilename
                     );
                 } catch (FileException $e) {
                     $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image.');
                     return $this->redirectToRoute('book_new');
                 }
-
-                // Enregistrer le nom du fichier dans la base de données
                 $book->setCoverImage($newFilename);
             }
 

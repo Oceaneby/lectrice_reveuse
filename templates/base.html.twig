@@ -2,6 +2,7 @@
 <html lang="fr">
 	<head>
 		<meta charset="UTF-8">
+		
 		<title>
 			{% block title %}Bienvenue sur BookWorld!
 			{% endblock %}
@@ -11,28 +12,26 @@
 		{% block stylesheets %}
 			{{ encore_entry_link_tags('app') }}
 			<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+			<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+			<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
 
 		{% endblock %}
-
-		{# {% block javascripts %}
-			{{ encore_entry_script_tags('app') }}
-		{% endblock %} #}
 	</head>
 	<body>
 		<!-- Navbar -->
 		 <nav class="bg-gray-900 text-white shadow-md py-4">
       <div class="container mx-auto px-6 flex items-center justify-between">
         <!-- Logo -->
-        <a href="{{ path('app_home')}}" class="text-2xl font-bold text-indigo-500">BookWorld</a>
+        <a href="{{ path('app_home')}}" class="text-2xl font-bold text-indigo-500"> <img src="{{ asset('/images/LR.png') }}" alt="Logo LR Lectrice Rêveuse" class="max-h-12 object-contain"></a>
 
         <!-- Menu -->
         <div class="hidden md:flex space-x-8">
           <a href="#activity" class="hover:text-indigo-400 transition">L'activité des livres</a>
           
+          
           <!-- Menu déroulant Univers -->
           <div class="relative group  z-10">
             <a href="#" class="hover:text-indigo-400 transition">Univers
-            <!-- Sous-menu affiché en permanence -->
             	<ul class="absolute left-0 top-full bg-gray-800 text-white shadow-lg rounded-md mt-2 w-48 opacity-0 group-hover:opacity-100 z-50 transition-opacity duration-300">
               		<li><a href="{{ path('app_books_by_genre', { 'genre': 'Dark Romance' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Dark Romance</a></li>
               		<li><a href="#" class="block px-4 py-2 hover:bg-indigo-600 transition">Young Adult</a></li>
@@ -54,6 +53,9 @@
             <a href="{{ path('app_library') }}" class="hover:text-indigo-400 transition">Ma bibliothèque</a>
           {% endif %}
           <a href="#contact" class="hover:text-indigo-400 transition">Contact</a>
+          {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('admin') }}" class="hover:text-indigo-400 transition">Admin</a>
+          {% endif %}
         </div>
 
         <!-- Recherche -->
@@ -65,7 +67,7 @@
           <div id="search-results" class="absolute top-0 left-0 w-full mt-10 bg-gray-800 text-white shadow-lg rounded-md z-10 hidden cursor-pointer"></div>
         </div>
         
-        <!-- Buttons for Sign Up / Login / Account -->
+      
         <div class="hidden md:flex items-center space-x-4">
           {% if app.user %}
             <a href="{{ path('app_logout') }}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Se déconnecter</a>
@@ -78,17 +80,17 @@
       </div>
 
       <!-- Mobile Menu Button -->
-      <div class="md:hidden flex items-center">
+      {# <div class="md:hidden flex items-center">
         <button class="text-white focus:outline-none" id="menu-toggle">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
       </div>
-    </div>
+    </div> #}
 
     <!-- Mobile Menu -->
-    <div class="md:hidden bg-gray-800 text-white" id="mobile-menu" style="display: none;">
+    {# <div class="md:hidden bg-gray-800 text-white" id="mobile-menu" style="display: none;">
       <a href="#activity" class="block py-2 px-4 hover:bg-indigo-600">L'activité des livres</a>
       <a href="#explore" class="block py-2 px-4 hover:bg-indigo-600">Univers</a>
       <a href="#forum" class="block py-2 px-4 hover:bg-indigo-600">Forum</a>
@@ -96,17 +98,16 @@
       <a href="#signup" class="block py-2 px-4 hover:bg-indigo-600">S'inscrire</a>
       <a href="#login" class="block py-2 px-4 hover:bg-indigo-600">Se connecter</a>
       <a href="#account" class="block py-2 px-4 hover:bg-indigo-600">Mon compte</a>
-    </div>
+    </div> #}
   </nav>
 {% block body %}
 {% endblock %}
 {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
         <script>
-            
             function searchBooks(event) {
                 const query = document.getElementById('search-input').value;  // Récupère le texte du champ de recherche
-                const searchResults = document.getElementById('search-results'); // Élément pour afficher les résultats
+                const searchResults = document.getElementById('search-results');
 
                 if (query.length > 5) {  
                     // Effectuer la requête AJAX
@@ -149,6 +150,9 @@
                 }
             }
         </script>
+        <script src="{{ asset('js/review_delete.js') }}" defer></script>
+        <script src="{{ asset('js/review_edit.js') }}" defer></script>
+		
     {% endblock %}
 {# // <script>
 

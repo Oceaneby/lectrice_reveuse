@@ -3,6 +3,22 @@
 {% block title %}Hello HomeController!{% endblock %}
 
 {% block body %}
+        <div class="slick-carousel flex space-x-2">
+        <div class="relative bg-gray-200 overflow-hidden rounded-lg" style="width: 332px; height: 332px;">
+            <img src="{{ asset('uploads/book_cover/majesty-tome-2-fallen-majesty-5599999-67e2c3d70b62e.jpg') }}" alt="Couverture Majesty tome 2 Fallen Majesty" class="w-full h-full object-contain">
+            <!-- Texte collé à l'image avec positionnement ajusté -->
+            <p class="absolute ml-52 left-12 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-xl px-1 py-1 text-white break-words">
+                Le 30 avril 2025, découvrez le deuxième tome de la saga Fallen Majesty. Une histoire riche en émotions et en rebondissements vous attend !
+            </p>
+        </div>
+        <div class="relative bg-gray-200 overflow-hidden rounded-lg" style="width: 332px; height: 332px;">
+            <img src="{{ asset('uploads/book_cover/majesty-tome-1-mad-majesty-5553583-67e271e617a6c.png') }}" alt="Image 2" class="w-full h-full object-contain">
+        </div>
+        <div class="relative bg-gray-200 overflow-hidden rounded-lg" style="width: 332px; height: 332px;">
+            <img src="{{ asset('uploads/book_cover/Shatter-Me-67b30892adf3d.jpg') }}" alt="Image 3" class="w-full h-full object-contain">
+        </div>
+    </div>
+        </div>
         <div class="container mx-auto p-4">
         <h1 class="text-3xl font-semibold mb-4">Nos Livres</h1>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -22,7 +38,7 @@
                             {% endif %}
                         </p>
                         
-                        <!-- Bouton "EN SAVOIR PLUS" centré en bas avec fond blanc -->
+                        <!-- Bouton "EN SAVOIR PLUS"  -->
                         <div class="text-center mt-auto">
                             <a href="{{ path('app_book_show', {'id': book.id}) }}" class="bg-white text-black font-semibold py-2 px-4 rounded-md shadow-md hover:bg-gray-200 transition duration-200">EN SAVOIR PLUS</a>
                         </div>
@@ -35,4 +51,23 @@
             {% endfor %}
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Charger Slick après jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+    
+    <script>
+        $(document).ready(function(){
+            setTimeout(function(){ 
+            console.log($('.slick-carousel').length);
+    $('.slick-carousel').slick({
+        autoplay: true,           
+        autoplaySpeed: 3000,      // Délai entre chaque changement (en ms)
+        dots: true,               // Afficher des points pour navigation
+        arrows: true,             // Afficher les flèches de navigation
+
+    });
+   }, 500);
+});
+    </script>
 {% endblock %}

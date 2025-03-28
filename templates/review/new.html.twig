@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Ajouter un commentaire pour "{{ book.title }}"</h1>
+
+    {# Affichage des messages flash (succès ou erreur) #}
+    {% for flash_message in app.flashes('success') %}
+        <div class="alert alert-success">{{ flash_message }}</div>
+    {% endfor %}
+    {% for flash_message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ flash_message }}</div>
+    {% endfor %}
+
+    {# Le formulaire pour ajouter une revue #}
+    {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_label(form.review_text) }}
+            {{ form_widget(form.review_text, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.rating) }}
+            {{ form_widget(form.rating, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Publier mon commentaire</button>
+    {{ form_end(form) }}
+
+    <br />
+    <a href="{{ path('app_book_reviews', {id: book.id}) }}" class="btn btn-link">Retour à la liste des commentaires</a>
+{% endblock %}
+

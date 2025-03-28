@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Author;
 use App\Form\AuthorType;
+
 use App\Repository\AuthorRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,6 +17,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 #[Route('/author')]
 final class AuthorController extends AbstractController
 {
+    
+
     #[Route(name: 'app_author_index', methods: ['GET'])]
     public function index(AuthorRepository $authorRepository): Response
     {
