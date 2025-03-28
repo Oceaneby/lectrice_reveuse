@@ -134,4 +134,38 @@ class ReviewController extends AbstractController
         return new JsonResponse(['success' => false, 'message' => 'Token CSRF invalide.']);
         
     }
+    #[Route("/profile/reviews", name: "profile_edit_reviews")]
+    public function editReviews( ReviewRepository $reviewRepository, Request $request): Response
+{
+    $user = $this->getUser();
+    // Récupérer tous les commentaires de l'utilisateur
+    $reviews = $reviewRepository->findBy(['user' => $user]);
+
+    return $this->render('review/edit.html.twig', [
+        'reviews' => $reviews,
+    ]);
+}
+#[Route("/profile/reviews/{id}/edit", name: "profile_edit_review")]
+public function editReview(Review $review, Request $request): Response
+{
+    // Vérifie que l'utilisateur est bien l'auteur du commentaire
+    if ($this->getUser() !== $review->getUser()) {
+        throw new AccessDeniedException('Vous ne pouvez modifier que vos propres commentaires.');
+    }
+
+    $form = $this->createForm(ReviewType::class, $review);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $this->entityManager->flush();
+        $this->addFlash('success', 'Votre commentaire a été mis à jour.');
+        return $this->redirectToRoute('profile_edit_reviews');
+    }
+
+    return $this->render('review/review_edit.html.twig', [
+        'form' => $form->createView(),
+        'review' => $review,
+    ]);
+}
+
 }

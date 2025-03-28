@@ -1,10 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Book
-{% endblock %}
+{% block title %}Book{% endblock %}
 
 {% block body %}
-	<div class="container mx-auto p-8">
+    <div class="container mx-auto p-8">
         <div class="bg-white p-6 rounded-lg shadow-lg">
             <div class="flex flex-col md:flex-row">
                 <div class="flex-none w-full md:w-1/3">
@@ -44,34 +43,6 @@
                             </div>
                         {% endif %}
                     </div>
-
-                    <div class="mt-6 flex space-x-4">
-                        {% if book.amazonUrl %}
-                            <a href="{{ book.amazonUrl }}" target="_blank" class="bg-yellow-400 text-black px-6 py-2 rounded-md hover:bg-yellow-500 transition duration-300 text-lg text-center">
-                                Acheter sur Amazon
-                            </a>
-                        {% endif %}
-                        {% if book.fnacUrl %}
-                            <a href="{{ book.fnacUrl }}" target="_blank" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-300 text-lg text-center">
-                                Acheter sur Fnac
-                            </a>
-                        {% endif %}
-                        {% if app.user %}
-                            <form action="{{ path('app_library_add', {'bookId': book.id}) }}" method="POST" class="flex items-center">
-                                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-300 text-lg text-center">
-                                    Ajouter à ma bibliothèque
-                                </button>
-                            </form>
-                        {% endif %}
-                    </div>
-
-                    {% if isAdmin %}
-                        <div class="mt-6 text-center">
-                            <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300">
-                                Modifier ce livre
-                            </a>
-                        </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -84,12 +55,23 @@
                 <div class="mt-4">
                     {% for review in reviews %}
                         <div id="review-{{ review.id }}" class="bg-gray-100 p-4 mb-4 rounded-md">
+                            <div class="flex-none w-12 h-12 mr-4">
+                                {% if review.user.profilPicture|length > 0 %}
+                                    <img src="{{ asset('uploads/profil_pictures/' ~ review.user.profilPicture[0].getImageUrl) }}" alt="Photo de profil" class="w-12 h-12 rounded-full object-cover mb-4">
+                                {% else %}
+                                    <!-- Aucune image affichée si pas de photo de profil -->
+                                    <div class="w-12 h-12 rounded-full bg-gray-300"></div>
+                                {% endif %}
+                            </div>
                             <p><strong>{{ review.user.username }}</strong> a écrit :</p>
                             <p class="mt-2 review-text">{{ review.reviewText }}</p>
                             <p class="text-sm text-gray-500 mt-2 review-date">{{ review.reviewDate|date('d/m/Y H:i') }}</p>
-                            <p class="text-sm text-yellow-500 mt-2">
+                            <p class="text-sm mt-2">
+                                <!-- Affichage des étoiles pour la note -->
                                 {% for i in 1..5 %}
-                                    <span class="inline-block w-5 h-5 review-rating {{ i <= review.rating ? 'bg-yellow-500' : 'bg-gray-300' }} rounded-full"></span>
+                                    <span class="inline-block w-5 h-5 {{ i <= review.rating ? 'text-yellow-500' : 'text-gray-300' }} text-xl">
+                                        ★
+                                    </span>
                                 {% endfor %}
                             </p>
                             {% if app.user == review.user %}
@@ -104,74 +86,46 @@
             {% endif %}
         </div>
 
-        <!-- Formulaire d'ajout d'un commentaire uniquement si on n'est pas en mode modification -->
+        <!-- Formulaire d'ajout de commentaire uniquement si on n'est pas en mode modification -->
         {% if app.user %}
-            {% set reviewTextField %}
+            <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Ajouter un commentaire pour "{{ book.title }}"</h2>
+
+                {% for flash_message in app.flashes('success') %}
+                    <div class="bg-green-100 text-green-800 p-4 mb-4 rounded-md">{{ flash_message }}</div>
+                {% endfor %}
+                {% for flash_message in app.flashes('error') %}
+                    <div class="bg-red-100 text-red-800 p-4 mb-4 rounded-md">{{ flash_message }}</div>
+                {% endfor %}
+
+                {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
                 <div>
                     {{ form_row(form.review_text, {
-                        'attr': {'class': 'block w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none'}
+                        'attr': {'class': 'block w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none' }
                     }) }}
                 </div>
-            {% endset %}
 
-            {% set ratingField %}
-                <div class="mt-4 flex items-center space-x-4">
-                    {{ form_label(form.rating, null, { 'label_attr': {'class': 'block text-lg font-medium text-gray-700'} }) }}
-                    <div class="flex items-center space-x-4">
-                        {{ form_widget(form.rating, {'attr': {'class': 'peer hidden'}}) }}
+                <!-- Affichage des étoiles interactives -->
+                <div class="mt-4">
+                    {{ form_label(form.rating, null, {'attr': {'class': 'text-lg font-medium text-gray-700'}}) }}
+                    <div class="flex space-x-4">
                         {% for choice in form.rating %}
                             <div class="relative">
-                                <input type="radio" id="{{ choice.vars.id }}" name="{{ choice.vars.full_name }}" value="{{ choice.vars.value }}" class="peer hidden"
-                                    {% if choice.vars.value == form.rating.vars.value %}checked{% endif %} />
-                                <label for="{{ choice.vars.id }}" class="cursor-pointer p-2 rounded-full border-2 border-gray-300 hover:border-yellow-400 focus:outline-none transition-all">
-                                    {{ choice.vars.label }}
+                                <!-- Cacher le radio bouton -->
+                                {{ form_widget(choice, {'attr': {'class': 'hidden'}}) }}
+                                <label for="{{ choice.vars.id }}" class="cursor-pointer text-2xl text-gray-300 hover:text-yellow-400 transition-colors duration-200">
+                                    ★
                                 </label>
                             </div>
                         {% endfor %}
                     </div>
                 </div>
-            {% endset %}
 
-            {% if reviewToEdit is not defined %}
-                <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Ajouter un commentaire pour "{{ book.title }}"</h2>
-
-                    {% for flash_message in app.flashes('success') %}
-                        <div class="bg-green-100 text-green-800 p-4 mb-4 rounded-md">{{ flash_message }}</div>
-                    {% endfor %}
-                    {% for flash_message in app.flashes('error') %}
-                        <div class="bg-red-100 text-red-800 p-4 mb-4 rounded-md">{{ flash_message }}</div>
-                    {% endfor %}
-
-                    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
-                    {{ reviewTextField }}
-                    {{ ratingField }}
-                    <button type="submit" class="w-full bg-yellow-500 text-white py-3 rounded-md hover:bg-yellow-600 transition duration-300 text-xl">
-                        Publier mon commentaire
-                    </button>
-                    {{ form_end(form) }}
-                </div>
-            {% elseif reviewToEdit is defined %}
-                <!-- Formulaire de modification de commentaire uniquement si on est en mode modification -->
-                <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Modifier votre commentaire pour "{{ book.title }}"</h2>
-
-                    {% for flash_message in app.flashes('success') %}
-                        <div class="bg-green-100 text-green-800 p-4 mb-4 rounded-md">{{ flash_message }}</div>
-                    {% endfor %}
-                    {% for flash_message in app.flashes('error') %}
-                        <div class="bg-red-100 text-red-800 p-4 mb-4 rounded-md">{{ flash_message }}</div>
-                    {% endfor %}
-
-                    {{ form_start(form, {'attr': {'class': 'space-y-6', 'id': 'edit-review-form'}}) }}
-                    {{ reviewTextField }}
-                    {{ ratingField }}
-                    <button type="submit" class="w-full bg-yellow-500 text-white py-3 rounded-md hover:bg-yellow-600 transition duration-300 text-xl">
-                        Mettre à jour mon commentaire
-                    </button>
-                    {{ form_end(form) }}
-                </div>
-            {% endif %}
+                <button type="submit" class="w-full bg-yellow-500 text-white py-3 rounded-md hover:bg-yellow-600 transition duration-300 text-xl">
+                    Publier mon commentaire
+                </button>
+                {{ form_end(form) }}
+            </div>
         {% endif %}
 
         <div class="mt-8 text-center">
@@ -180,8 +134,4 @@
             </a>
         </div>
     </div>
-
-   
-	 
-	
 {% endblock %}

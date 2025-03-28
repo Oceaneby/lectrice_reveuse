@@ -2,9 +2,9 @@
 <html lang="fr">
 	<head>
 		<meta charset="UTF-8">
-		
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>
-			{% block title %}Bienvenue sur BookWorld!
+			{% block title %}Bienvenue sur Lectrice Rêveuse!
 			{% endblock %}
 		</title>
 		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
@@ -14,152 +14,137 @@
 			<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 			<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
 			<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+			<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
 		{% endblock %}
 	</head>
 	<body>
 		<!-- Navbar -->
-		 <nav class="bg-gray-900 text-white shadow-md py-4">
-      <div class="container mx-auto px-6 flex items-center justify-between">
-        <!-- Logo -->
-        <a href="{{ path('app_home')}}" class="text-2xl font-bold text-indigo-500"> <img src="{{ asset('/images/LR.png') }}" alt="Logo LR Lectrice Rêveuse" class="max-h-12 object-contain"></a>
+		<nav class="bg-gray-900 text-white shadow-md py-4">
+			<div
+				class="container mx-auto px-6 flex items-center justify-between">
+				<!-- Logo -->
+				<a href="{{ path('app_home')}}" class="text-2xl font-bold text-indigo-500">
+					<img src="{{ asset('/images/LR.png') }}" alt="Logo LR Lectrice Rêveuse" class="max-h-12 object-contain"></a>
 
-        <!-- Menu -->
-        <div class="hidden md:flex space-x-8">
-          <a href="#activity" class="hover:text-indigo-400 transition">L'activité des livres</a>
-          
-          
-          <!-- Menu déroulant Univers -->
-          <div class="relative group  z-10">
-            <a href="#" class="hover:text-indigo-400 transition">Univers
-            	<ul class="absolute left-0 top-full bg-gray-800 text-white shadow-lg rounded-md mt-2 w-48 opacity-0 group-hover:opacity-100 z-50 transition-opacity duration-300">
-              		<li><a href="{{ path('app_books_by_genre', { 'genre': 'Dark Romance' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Dark Romance</a></li>
-              		<li><a href="#" class="block px-4 py-2 hover:bg-indigo-600 transition">Young Adult</a></li>
-              		<li><a href="{{ path('app_books_by_genre', { 'genre': 'New Romance' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">New Romance</a></li>
-              		<li><a href="{{ path('app_books_by_genre', { 'genre': 'Fantasy' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Fantasy</a></li>
-              		<li><a href="{{ path('app_books_by_genre', { 'genre': 'Littérature classique' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Littérature classique</a></li>
-              		<li><a href="{{ path('app_books_by_genre', { 'genre': 'Manga' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Manga</a></li>
-              		<li><a href="{{ path('app_books_by_genre', { 'genre': 'Horreur' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Horreur</a></li>
-              		<li><a href="{{ path('app_books_by_genre', { 'genre': 'Fantastique' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Fantastique</a></li>
-              		<li><a href="{{ path('app_books_by_genre', { 'genre': 'Science-Fiction' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Science-Fiction</a></li>
-					<li><a href="{{ path('app_books_by_genre', { 'genre': "Roman d\'amour" }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Roman d'amour</a></li>
-					<li><a href="{{ path('app_books_by_genre', { 'genre': 'Romance contemporaine' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Romance contemporaine</a></li>
-            	</ul>
-			</a>
-          </div>
-          
-          <a href="#forum" class="hover:text-indigo-400 transition">Forum</a>
-          {% if app.user %}
-            <a href="{{ path('app_library') }}" class="hover:text-indigo-400 transition">Ma bibliothèque</a>
-          {% endif %}
-          <a href="#contact" class="hover:text-indigo-400 transition">Contact</a>
-          {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('admin') }}" class="hover:text-indigo-400 transition">Admin</a>
-          {% endif %}
-        </div>
+				<!-- Menu -->
+				<div class="hidden md:flex space-x-8">
+					<a href="#activity" class="hover:text-indigo-400 transition">L'activité des livres</a>
 
-        <!-- Recherche -->
-        <div class="relative hidden md:block">
-          <form id="search-form" action="{{ path('app_book_index') }}" method="get" class="flex" onsubmit="event.preventDefault(); searchBooks();">
-            <input type="text" id="search-input" name="query" placeholder="Recherche..." class="bg-gray-800 text-white px-4 py-2 rounded-l-lg focus:outline-none" oninput="searchBooks(event)">
-            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-r-lg hover:bg-indigo-700">Rechercher</button>
-          </form>
-          <div id="search-results" class="absolute top-0 left-0 w-full mt-10 bg-gray-800 text-white shadow-lg rounded-md z-10 hidden cursor-pointer"></div>
-        </div>
-        
-      
-        <div class="hidden md:flex items-center space-x-4">
-          {% if app.user %}
-            <a href="{{ path('app_logout') }}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Se déconnecter</a>
-          {% else %}
-            <a href="{{ path('app_register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition">S'inscrire</a>
-            <a href="{{ path('app_login') }}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Se connecter</a>
-          {% endif %}
-          <a href="{{ path('app_profile_index') }}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Mon compte</a>
-        </div>
-      </div>
+					<!-- Menu déroulant Univers -->
+					<div class="relative group  z-10">
+						<a href="#" class="hover:text-indigo-400 transition">Univers
+							<ul class="absolute left-0 top-full bg-gray-800 text-white shadow-lg rounded-md mt-2 w-48 opacity-0 group-hover:opacity-100 z-50 transition-opacity duration-300">
+								<li>
+									<a href="{{ path('app_books_by_genre', { 'genre': 'Dark Romance' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Dark Romance</a>
+								</li>
+								<li>
+									<a href="#" class="block px-4 py-2 hover:bg-indigo-600 transition">Young Adult</a>
+								</li>
+								<li>
+									<a href="{{ path('app_books_by_genre', { 'genre': 'New Romance' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">New Romance</a>
+								</li>
+								<li>
+									<a href="{{ path('app_books_by_genre', { 'genre': 'Fantasy' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Fantasy</a>
+								</li>
+								<li>
+									<a href="{{ path('app_books_by_genre', { 'genre': 'Littérature classique' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Littérature classique</a>
+								</li>
+								<li>
+									<a href="{{ path('app_books_by_genre', { 'genre': 'Manga' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Manga</a>
+								</li>
+								<li>
+									<a href="{{ path('app_books_by_genre', { 'genre': 'Horreur' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Horreur</a>
+								</li>
+								<li>
+									<a href="{{ path('app_books_by_genre', { 'genre': 'Fantastique' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Fantastique</a>
+								</li>
+								<li>
+									<a href="{{ path('app_books_by_genre', { 'genre': 'Science-Fiction' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Science-Fiction</a>
+								</li>
+								<li>
+									<a href="{{ path('app_books_by_genre', { 'genre': "Roman d\'amour" }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Roman d'amour</a>
+								</li>
+								<li>
+									<a href="{{ path('app_books_by_genre', { 'genre': 'Romance contemporaine' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Romance contemporaine</a>
+								</li>
+							</ul>
+						</a>
+					</div>
 
-      <!-- Mobile Menu Button -->
-      {# <div class="md:hidden flex items-center">
-        <button class="text-white focus:outline-none" id="menu-toggle">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
-      </div>
-    </div> #}
+					<a href="#forum" class="hover:text-indigo-400 transition">Forum</a>
+					{% if app.user %}
+						<a href="{{ path('app_library') }}" class="hover:text-indigo-400 transition">Ma bibliothèque</a>
+					{% endif %}
+					<a href="#contact" class="hover:text-indigo-400 transition">Contact</a>
+					{% if is_granted('ROLE_ADMIN') %}
+						<a href="{{ path('admin') }}" class="hover:text-indigo-400 transition">Admin</a>
+					{% endif %}
+				</div>
 
-    <!-- Mobile Menu -->
-    {# <div class="md:hidden bg-gray-800 text-white" id="mobile-menu" style="display: none;">
-      <a href="#activity" class="block py-2 px-4 hover:bg-indigo-600">L'activité des livres</a>
-      <a href="#explore" class="block py-2 px-4 hover:bg-indigo-600">Univers</a>
-      <a href="#forum" class="block py-2 px-4 hover:bg-indigo-600">Forum</a>
-      <a href="#contact" class="block py-2 px-4 hover:bg-indigo-600">Contact</a>
-      <a href="#signup" class="block py-2 px-4 hover:bg-indigo-600">S'inscrire</a>
-      <a href="#login" class="block py-2 px-4 hover:bg-indigo-600">Se connecter</a>
-      <a href="#account" class="block py-2 px-4 hover:bg-indigo-600">Mon compte</a>
-    </div> #}
-  </nav>
-{% block body %}
-{% endblock %}
-{% block javascripts %}
-        {{ encore_entry_script_tags('app') }}
-        <script>
-            function searchBooks(event) {
-                const query = document.getElementById('search-input').value;  // Récupère le texte du champ de recherche
-                const searchResults = document.getElementById('search-results');
+				<!-- Recherche -->
+				<div class="relative hidden md:block">
+					<form id="search-form" action="{{ path('app_book_index') }}" method="get" class="flex" onsubmit="event.preventDefault(); searchBooks();">
+						<input type="text" id="search-input" name="query" placeholder="Recherche..." class="bg-gray-800 text-white px-4 py-2 rounded-l-lg focus:outline-none" oninput="searchBooks(event)">
+						<button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-r-lg hover:bg-indigo-700">Rechercher</button>
+					</form>
+					<div id="search-results" class="absolute top-0 left-0 w-full mt-10 bg-gray-800 text-white shadow-lg rounded-md z-10 hidden cursor-pointer"></div>
+				</div>
 
-                if (query.length > 5) {  
-                    // Effectuer la requête AJAX
-                    	fetch('{{ path('app_book_search') }}?query=' + query, {
-                        	method: 'GET',
-                        	headers: {
-                            	'Accept': 'application/json', // Indiquer que la réponse attendue est en JSON
-                        	},
-                    	})
-                    .then(response => response.json())  // Convertir la réponse en JSON
-                    .then(data => {
-						console.log(data); 
-                        // Vider les anciens résultats
-                        searchResults.innerHTML = '';
 
-                        // Si des résultats sont trouvés
-                        if (data.length > 0) {
-                            data.forEach(book => {
-                                const bookElement = document.createElement('div');
-                                bookElement.classList.add('p-4', 'bg-gray-800', 'text-white', 'mb-2');
-                                bookElement.innerHTML = `<strong>${book.title}</strong> `;
-								 bookElement.onclick = function() {
-                            	window.location.href = `/book/${book.id}`;  // Rediriger vers la page du livre
-                        		};
-                                searchResults.appendChild(bookElement);
-                            });
+				<div class="hidden md:flex items-center space-x-4">
+					{% if app.user %}
+						<a href="{{ path('app_logout') }}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Se déconnecter</a>
+					{% else %}
+						<a href="{{ path('app_register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition">S'inscrire</a>
+						<a href="{{ path('app_login') }}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Se connecter</a>
+					{% endif %}
+					<a href="{{ path('app_profile_index') }}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Mon compte</a>
+				</div>
+			</div>
 
-                            // Afficher la liste des résultats
-                            searchResults.classList.remove('hidden');
-                        } else {
-                            searchResults.classList.add('hidden');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erreur lors de la recherche :', error);
-                    });
-				
-                } else {
-                    searchResults.classList.add('hidden');  // Cacher les résultats si la recherche est trop courte
-                }
-            }
-        </script>
-        <script src="{{ asset('js/review_delete.js') }}" defer></script>
-        <script src="{{ asset('js/review_edit.js') }}" defer></script>
-		
-    {% endblock %}
+			<!-- Mobile Menu Button -->
+		{# <div class="md:hidden flex items-center">
+						        <button class="text-white focus:outline-none" id="menu-toggle">
+						          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+						            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+						          </svg>
+						        </button>
+						      </div>
+						    </div> #}
+
+			<!-- Mobile Menu -->
+			{# <div class="md:hidden bg-gray-800 text-white" id="mobile-menu" style="display: none;">
+									      <a href="#activity" class="block py-2 px-4 hover:bg-indigo-600">L'activité des livres</a>
+									      <a href="#explore" class="block py-2 px-4 hover:bg-indigo-600">Univers</a>
+									      <a href="#forum" class="block py-2 px-4 hover:bg-indigo-600">Forum</a>
+									      <a href="#contact" class="block py-2 px-4 hover:bg-indigo-600">Contact</a>
+									      <a href="#signup" class="block py-2 px-4 hover:bg-indigo-600">S'inscrire</a>
+									      <a href="#login" class="block py-2 px-4 hover:bg-indigo-600">Se connecter</a>
+									      <a href="#account" class="block py-2 px-4 hover:bg-indigo-600">Mon compte</a>
+									    </div> #}
+		</nav>
+
+		{% block body %}
+		{% endblock %}
+		{% block javascripts %}
+			{{ encore_entry_script_tags('app') }}
+	
+	{# </script> #}
+	<script>
+    	const searchUrl = '{{ path('app_book_search') }}'; // Injecte l'URL Twig dans une variable JavaScript
+	</script>
+	<script src="{{ asset('js/search.js') }}" defer></script>
+	<script src="{{ asset('js/review_delete.js') }}" defer></script>
+	<script src="{{ asset('js/review_edit.js') }}" defer></script>
+
+	{% endblock %}
 {# // <script>
-
-// const menuButton = document.getElementById('menu-toggle');
-// const mobileMenu = document.getElementById('mobile-menu');
-
-// menuButton.addEventListener('click', () => {
-// mobileMenu.style.display = mobileMenu.style.display === 'none' ? 'block' : 'none';
-// });</script> #}
+		
+		// const menuButton = document.getElementById('menu-toggle');
+		// const mobileMenu = document.getElementById('mobile-menu');
+		
+		// menuButton.addEventListener('click', () => {
+		// mobileMenu.style.display = mobileMenu.style.display === 'none' ? 'block' : 'none';
+		// });</script> #}
 </body></html>
