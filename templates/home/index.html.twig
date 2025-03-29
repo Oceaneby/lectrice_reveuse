@@ -9,8 +9,12 @@
 
 		<div class="w-full">
 			<div class="flex  justify-center items-center bg-gray-200 overflow-hidden rounded-lg">
+				  <div class=" px-1 py-4 pr-2 pl-4" style="width: 132px; height: 132px;">
+                <img src="{{ asset('images/black-and-white-4270982_1280.png') }}" alt="livres" class="w-full h-full object-contain">
+            </div>
 				<div class=" mt-1 rounded-md top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 text-xl px-1 py-4 pr-2 pl-4 text-white" style="width: 20%">
-					<p class="uppercase font-bold">Date de sortie le 30 avril 2025 !</p>
+					<p >Date de sortie</p>
+					<p class="uppercase font-bold"> Le 30 avril 2025 !</p>
 				</div>
 				<div style="width: 332px; height: 332px;">
 					<img src="{{ asset('uploads/book_cover/majesty-tome-2-fallen-majesty-5599999-67e2c3d70b62e.jpg') }}" alt="Couverture Majesty tome 2 Fallen Majesty" class="w-full h-full object-contain">
@@ -85,6 +89,24 @@
 			</div>
 		{% endfor %}
 	</div>
+	{% block pagination %}
+    <div class="mt-8 text-center">
+        <div class="flex justify-center space-x-2 mt-8">
+            <ul class="flex items-center space-x-2">
+                {% for page in 1..books.getPageCount() %}
+                    <li>
+                        <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'page': page})) }}"
+                           class="px-4 py-2 text-sm rounded-md bg-gray-200 hover:bg-gray-300 transition-colors duration-200 {% if page == books.getCurrentPageNumber() %}bg-pink-700 text-white{% endif %}">
+                            {{ page }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+</div>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -96,7 +118,7 @@
 setTimeout(function () {
 console.log($('.slick-carousel').length);
 $('.slick-carousel').slick({
-autoplay: true,
+autoplay: false,
 autoplaySpeed: 3000, // Délai entre chaque changement (en ms)
 dots: true, // Afficher des points pour navigation
 arrows: true, // Afficher les flèches de navigation
@@ -104,4 +126,7 @@ arrows: true, // Afficher les flèches de navigation
 });
 }, 500);
 });
-</script>{% endblock %}
+</script>
+<!-- Pagination personnalisée avec TailwindCSS -->
+
+{% endblock %}
