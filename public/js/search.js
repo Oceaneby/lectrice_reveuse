@@ -40,4 +40,8 @@ function searchBooks(event) {
     } else {
         searchResults.classList.add('hidden'); // Cacher les résultats si la recherche est trop courte
     }
+    document.getElementById('search-button').addEventListener('click', function(event) {
+        event.preventDefault();  // Empêche la soumission du formulaire
+        searchBooks(event);      // Appelle la fonction searchBooks
+    });
 }

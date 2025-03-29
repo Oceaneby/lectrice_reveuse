@@ -1,2 +1,5 @@
 @import "tailwindcss";
 
+.bn{
+    background-color: cornflowerblue;
+}

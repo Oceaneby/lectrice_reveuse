@@ -10,7 +10,7 @@
         <!-- Liste des commentaires -->
         <ul class="space-y-6">
             {% for review in reviews|sort((a, b) => b.getReviewDate() <=> a.getReviewDate()) %}
-                <li class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                <li id="review-{{ review.id }}" class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
                     <!-- Titre du livre concerné -->
                     <div class="flex items-center mb-4">
                         <img src="{{ asset('uploads/book_cover/' ~ review.book.coverImage) }}" alt="{{ review.book.title }}" class="w-16 h-24 object-cover rounded-lg">
@@ -34,14 +34,14 @@
                     <p class="text-sm text-gray-500">{{ review.getReviewDate()|date('d/m/Y H:i') }}</p>
 
                     <!-- Lien pour modifier le commentaire -->
-                    <a href="{{ path('profile_edit_review', {'id': review.id}) }}" class="text-blue-600 hover:text-blue-800 font-semibold text-lg">
+                    <a href="{{ path('profile_edit_review', {'id': review.id}) }}" class="text-blue-600 hover:underline mt-2 inline-block">
                         Modifier
                     </a>
 
                     <!-- Bouton pour supprimer le commentaire -->
                     {% if app.user == review.user %}
                                 <button type="button" data-review-id="{{ review.id }}" data-csrf-token="{{ csrf_token('delete' ~ review.id) }}" class="delete-review text-red-500 hover:underline mt-2 inline-block">Supprimer</button>
-                            {% endif %}
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>

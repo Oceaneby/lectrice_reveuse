@@ -15,6 +15,7 @@
 			<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
 			<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
 			<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+			<link href="{{ asset('styles/app.css') }}" rel="stylesheet" type="text/css">
 
 		{% endblock %}
 	</head>
@@ -81,25 +82,22 @@
 						<a href="{{ path('admin') }}" class="hover:text-indigo-400 transition">Admin</a>
 					{% endif %}
 				</div>
-
 				<!-- Recherche -->
 				<div class="relative hidden md:block">
 					<form id="search-form" action="{{ path('app_book_index') }}" method="get" class="flex" onsubmit="event.preventDefault(); searchBooks();">
 						<input type="text" id="search-input" name="query" placeholder="Recherche..." class="bg-gray-800 text-white px-4 py-2 rounded-l-lg focus:outline-none" oninput="searchBooks(event)">
-						<button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-r-lg hover:bg-indigo-700">Rechercher</button>
+						<button id="search-button"  type="submit" class="bg-pink-700 text-white px-4 py-2 rounded-r-lg hover:bg-pink-800">Rechercher</button>
 					</form>
 					<div id="search-results" class="absolute top-0 left-0 w-full mt-10 bg-gray-800 text-white shadow-lg rounded-md z-10 hidden cursor-pointer"></div>
 				</div>
-
-
 				<div class="hidden md:flex items-center space-x-4">
 					{% if app.user %}
 						<a href="{{ path('app_logout') }}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Se déconnecter</a>
 					{% else %}
 						<a href="{{ path('app_register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition">S'inscrire</a>
-						<a href="{{ path('app_login') }}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Se connecter</a>
+						<a href="{{ path('app_login') }}" class="bg-transparent border-2 border-pink-700 hover:bg-pink-700 hover:text-white text-pink-700 py-2 px-4 rounded-lg transition">Se connecter</a>
 					{% endif %}
-					<a href="{{ path('app_profile_index') }}" class="bg-transparent border-2 border-indigo-500 hover:bg-indigo-500 hover:text-white text-indigo-500 py-2 px-4 rounded-lg transition">Mon compte</a>
+					<a href="{{ path('app_profile_index') }}" class="bg-transparent border-2 border-pink-700 hover:bg-pink-700 hover:text-white text-pink-700 py-2 px-4 rounded-lg transition">Mon compte</a>
 				</div>
 			</div>
 
@@ -124,9 +122,29 @@
 									      <a href="#account" class="block py-2 px-4 hover:bg-indigo-600">Mon compte</a>
 									    </div> #}
 		</nav>
-
+		
 		{% block body %}
 		{% endblock %}
+
+		<!-- Footer -->
+		<footer class="bg-gray-900 text-white py-8 mt-8">
+			<div class="container mx-auto px-6">
+				<div class="flex justify-center items-center">
+					<!-- Logo du footer -->
+					<div class="flex items-center space-x-4 mr-8" >
+						<img src="{{ asset('/images/LR.png') }}" alt="Logo LR Lectrice Rêveuse" class="h-10">
+					</div>
+
+					<!-- Liens du footer -->
+					<div class="flex space-x-8">
+						<a href="#" class="hover:text-indigo-400 text-xs">Accueil</a>
+						<a href="#" class="hover:text-indigo-400 text-xs">Contact</a>
+						<a href="#" class="hover:text-indigo-400 text-xs">Mentions légales</a>
+					</div>
+				</div>
+			</div>
+		</footer>
+
 		{% block javascripts %}
 			{{ encore_entry_script_tags('app') }}
 	
@@ -134,9 +152,9 @@
 	<script>
     	const searchUrl = '{{ path('app_book_search') }}'; // Injecte l'URL Twig dans une variable JavaScript
 	</script>
-	<script src="{{ asset('js/search.js') }}" defer></script>
+		 <script src="{{ asset('js/search.js') }}" defer></script>
 
-	<script src="{{ asset('js/review_edit.js') }}" defer></script>
+	     <script src="{{ asset('js/review_edit.js') }}" defer></script>
 		<script src="{{ asset('js/review_delete.js') }}" defer></script>
 
 	{% endblock %}

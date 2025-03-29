@@ -145,7 +145,7 @@ class ReviewController extends AbstractController
         'reviews' => $reviews,
     ]);
 }
-#[Route("/profile/reviews/{id}/edit", name: "profile_edit_review")]
+#[Route("/profile/reviews/{id}/edit", name: "profile_edit_review", methods: ["POST", "GET"])]
 public function editReview(Review $review, Request $request): Response
 {
     // Vérifie que l'utilisateur est bien l'auteur du commentaire

@@ -11,6 +11,7 @@ function renderRatingCircles(note) {
 
 function bindReviewFormHandler() {
     const form = document.getElementById('edit-review-form');
+    console.log("Formulaire d'édition trouvé :", form);
     if (!form) {
         console.log("🚫 Formulaire d'édition non trouvé.");
         return;
@@ -77,6 +78,7 @@ function bindReviewFormHandler() {
 
                 // 🔁 Rebind le formulaire pour permettre une autre modification
                 bindReviewFormHandler();
+               
             } else {
                 alert('❌ Erreur lors de la mise à jour du commentaire.');
             }
@@ -91,3 +93,5 @@ function bindReviewFormHandler() {
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(bindReviewFormHandler, 100);
 });
+
+
