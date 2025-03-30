@@ -16,7 +16,11 @@
                         <img src="{{ asset('uploads/book_cover/' ~ review.book.coverImage) }}" alt="{{ review.book.title }}" class="w-16 h-24 object-cover rounded-lg">
                         <div class="ml-4">
                             <p class="font-semibold text-lg text-gray-800">{{ review.book.title }}</p>
-                            <p class="text-sm text-gray-500">{{ review.book.author.firstName }} {{ review.book.author.lastName }}</p>
+                            <p class="text-sm text-gray-500">
+                                {% for author in review.book.getAuthors %}
+                                    {{ author.firstName }} {{ author.lastName }}{% if not loop.last %}, {% endif %}
+                                 {% endfor %}
+                            </p>
                         </div>
                     </div>
 

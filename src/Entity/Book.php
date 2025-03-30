@@ -32,9 +32,11 @@ class Book
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $cover_image = null;
 
-    #[ORM\ManyToOne(inversedBy: 'books')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Author $author = null;
+    // #[ORM\ManyToOne(inversedBy: 'books')]
+    // #[ORM\JoinColumn(nullable: false)]
+    // private ?Author $author = null;
+    #[ORM\ManyToMany(targetEntity: Author::class, mappedBy: 'books')]
+    private Collection $authors;
 
     #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'books')]
     #[ORM\JoinTable(name: "book_genres")]
@@ -74,6 +76,7 @@ class Book
         $this->reviews = new ArrayCollection();
         $this->bookshelves = new ArrayCollection();
         $this->genres = new ArrayCollection();
+        $this->authors = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -147,17 +150,32 @@ class Book
         return $this;
     }
 
-    public function getAuthor(): ?Author
+    public function getAuthors(): Collection
     {
-        return $this->author;
+        return $this->authors;
     }
-
-    public function setAuthor(?Author $author): static
+    public function addAuthor(Author $author): static
     {
-        $this->author = $author;
+        if (!$this->authors->contains($author)) {
+            $this->authors[] = $author;
+        }
 
         return $this;
     }
+
+    public function removeAuthor(Author $author): static
+    {
+        $this->authors->removeElement($author);
+
+        return $this;
+    }
+
+    // public function setAuthor(?Author $author): static
+    // {
+    //     $this->author = $author;
+
+    //     return $this;
+    // }
 
     public function getGenres(): Collection
     {

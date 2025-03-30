@@ -168,8 +168,11 @@
 
                     <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div class="flex flex-col">
-                            <span class="font-semibold text-gray-700">Auteur :</span>
-                            <span class="text-gray-600">{{ book.author.firstName }} {{ book.author.lastName }}</span>
+                            <span class="font-semibold text-gray-700">Auteurs :</span>
+                            <span class="text-gray-600">  
+                            {% for author in book.authors %}
+                                {{ author.firstName }} {{ author.lastName }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}</span>
                         </div>
                         <div class="flex flex-col">
                             <span class="font-semibold text-gray-700">Maison d'édition :</span>

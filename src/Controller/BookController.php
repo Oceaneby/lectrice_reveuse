@@ -97,6 +97,12 @@ final class BookController extends AbstractController
                 $book->setCoverImage($newFilename);
             }
 
+            // Associer les auteurs sélectionnés
+            $authors = $form->get('authors')->getData(); // On récupère les auteurs sélectionnés
+            foreach ($authors as $author) {
+            $book->addAuthor($author);  
+        }
+
             $entityManager->persist($book);
             $entityManager->flush();
 

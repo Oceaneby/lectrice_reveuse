@@ -59,9 +59,11 @@ class BookType extends AbstractType
                 'data_class' => null,
             ])
             
-            ->add('author', EntityType::class, [
+            ->add('authors', EntityType::class, [
                 'class' => Author::class,
                 'choice_label' => 'first_name',
+                'multiple' => true,  // permet de sélectionner plusieurs auteurs
+                'expanded' => true,
                 'attr' => ['class' => 'block w-25 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
             ])
             ->add('genres', EntityType::class, [

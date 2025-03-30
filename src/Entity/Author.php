@@ -37,7 +37,10 @@ class Author
     /**
      * @var Collection<int, Book>
      */
-    #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'author', orphanRemoval: true)]
+    // #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'author', orphanRemoval: true)]
+    // private Collection $books;
+    #[ORM\ManyToMany(targetEntity: Book::class, inversedBy: 'authors')]
+    #[ORM\JoinTable(name: "author_books")]
     private Collection $books;
 
     public function __construct()
@@ -139,8 +142,7 @@ class Author
     public function addBook(Book $book): static
     {
         if (!$this->books->contains($book)) {
-            $this->books->add($book);
-            $book->setAuthor($this);
+            $this->books[] = $book;
         }
 
         return $this;
@@ -148,12 +150,7 @@ class Author
 
     public function removeBook(Book $book): static
     {
-        if ($this->books->removeElement($book)) {
-            // set the owning side to null (unless already changed)
-            if ($book->getAuthor() === $this) {
-                $book->setAuthor(null);
-            }
-        }
+        $this->books->removeElement($book);
 
         return $this;
     }
