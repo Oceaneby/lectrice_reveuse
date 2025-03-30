@@ -37,6 +37,12 @@
 						<a href="#" class="hover:text-indigo-400 transition">Univers
 							<ul class="absolute left-0 top-full bg-gray-800 text-white shadow-lg rounded-md mt-2 w-48 opacity-0 group-hover:opacity-100 z-50 transition-opacity duration-300">
 								<li>
+									<a href="{{ path('app_books_by_genre', { 'genre': 'Aventure' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Aventure</a>
+								</li>
+								<li>
+									<a href="{{ path('app_books_by_genre', { 'genre': 'Fiction' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Fiction</a>
+								</li>
+								<li>
 									<a href="{{ path('app_books_by_genre', { 'genre': 'Dark Romance' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Dark Romance</a>
 								</li>
 								<li>
@@ -68,6 +74,9 @@
 								</li>
 								<li>
 									<a href="{{ path('app_books_by_genre', { 'genre': 'Romance contemporaine' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Romance contemporaine</a>
+								</li>
+								<li>
+									<a href="{{ path('app_books_by_genre', { 'genre': 'Littérature jeunesse' }) }}" class="block px-4 py-2 hover:bg-indigo-600 transition">Littérature jeunesse</a>
 								</li>
 							</ul>
 						</a>

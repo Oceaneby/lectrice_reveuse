@@ -99,8 +99,14 @@ final class BookController extends AbstractController
 
             // Associer les auteurs sélectionnés
             $authors = $form->get('authors')->getData(); // On récupère les auteurs sélectionnés
+            // dump($authors); 
+            // dd($authors);
             foreach ($authors as $author) {
             $book->addAuthor($author);  
+            $entityManager->persist($author); 
+        }
+        foreach ($book->getAuthors() as $author) {
+            // dd($book->getAuthors());
         }
 
             $entityManager->persist($book);

@@ -35,7 +35,8 @@ class Book
     // #[ORM\ManyToOne(inversedBy: 'books')]
     // #[ORM\JoinColumn(nullable: false)]
     // private ?Author $author = null;
-    #[ORM\ManyToMany(targetEntity: Author::class, mappedBy: 'books')]
+    #[ORM\ManyToMany(targetEntity: Author::class, inversedBy: 'books')]
+    #[ORM\JoinTable(name: "author_books")]
     private Collection $authors;
 
     #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'books')]
@@ -165,7 +166,10 @@ class Book
 
     public function removeAuthor(Author $author): static
     {
-        $this->authors->removeElement($author);
+        if ($this->authors->removeElement($author)) {
+         
+            $author->removeBook($this);  
+        }
 
         return $this;
     }
