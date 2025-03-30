@@ -22,7 +22,7 @@ final class HomeController extends AbstractController
         $books = $paginator->paginate(
             $queryBuilder,   // La requête à paginer
             $page,           // Le numéro de page
-            20              // Nombre d'éléments par page
+            12              // Nombre d'éléments par page
         );
 
         return $this->render('home/index.html.twig', [

@@ -13,35 +13,46 @@ use App\Repository\LibraryRepository;
 use App\Repository\BookRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/library')]
 final class LibraryController extends AbstractController
 {
     #[Route(name: 'app_library')]
-    public function viewLibrary(LibraryRepository $libraryRepository): Response
+    public function viewLibrary(LibraryRepository $libraryRepository, Request $request, PaginatorInterface $paginator): Response
     {
         $user = $this->getUser();
-
 
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
-
+    
         $library = $libraryRepository->findOneBy(['user' => $user]);
         if (!$library) {
             return $this->render('library/empty.html.twig');
         }
-
+    
         $bookshelves = $library->getBookshelves();
-        $book = $library->getBooks();
-
-
-        $book = $library->getBooks()->toArray();
+    
+        // Pagination des livres par étagère
+        $paginatedBooksByShelf = [];
+    
+        foreach ($bookshelves as $bookshelf) {
+            // Récupère les livres de cette étagère
+            $books = $bookshelf->getBooks();
+    
+            // Applique la pagination
+            $paginatedBooksByShelf[$bookshelf->getId()] = $paginator->paginate(
+                $books, 
+                $request->query->getInt('page', 1), // Page actuelle (par défaut la première)
+                4 
+            );
+        }
         return $this->render('library/index.html.twig', [
             'library' => $library,
             'bookshelves' => $bookshelves,
-            'books' => $book,
+            'paginatedBooksByShelf' => $paginatedBooksByShelf, 
         ]);
     }
 

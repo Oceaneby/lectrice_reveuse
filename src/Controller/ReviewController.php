@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Doctrine\ORM\EntityManagerInterface; 
+use Knp\Component\Pager\PaginatorInterface; 
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 
@@ -135,18 +136,30 @@ class ReviewController extends AbstractController
         
     }
     #[Route("/profile/reviews", name: "profile_edit_reviews")]
-    public function editReviews( ReviewRepository $reviewRepository, Request $request): Response
+    public function editReviews( ReviewRepository $reviewRepository, Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
 {
     $user = $this->getUser();
     // Récupérer tous les commentaires de l'utilisateur
-    $reviews = $reviewRepository->findBy(['user' => $user]);
+    $reviewsQuery = $reviewRepository->createQueryBuilder('r')
+        ->where('r.user = :user')
+        ->setParameter('user', $user)
+        ->orderBy('r.review_date', 'DESC'); // Tri par date décroissante
+
+    $page = $request->query->getInt('page', 1); // Récupère le numéro de page
+
+    $reviews = $paginator->paginate(
+        $reviewsQuery,   // La requête triée
+        $page,           // Le numéro de page
+        5                // Nombre d'éléments par page
+    );
 
     return $this->render('review/edit.html.twig', [
         'reviews' => $reviews,
     ]);
 }
-#[Route("/profile/reviews/{id}/edit", name: "profile_edit_review", methods: ["POST", "GET"])]
-public function editReview(Review $review, Request $request): Response
+
+    #[Route("/profile/reviews/{id}/edit", name: "profile_edit_review", methods: ["POST", "GET"])]
+    public function editReview(Review $review, Request $request): Response
 {
     // Vérifie que l'utilisateur est bien l'auteur du commentaire
     if ($this->getUser() !== $review->getUser()) {

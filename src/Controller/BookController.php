@@ -60,7 +60,7 @@ final class BookController extends AbstractController
                 $results[] = [
                     'id' => $book->getId(),
                     'title' => $book->getTitle(),
-                    'author' => $book->getAuthor(),
+                    'author' => $book->getAuthors(),
                 ];
             }
         }

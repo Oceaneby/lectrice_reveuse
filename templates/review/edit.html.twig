@@ -50,4 +50,21 @@
             {% endfor %}
         </ul>
     </div>
+    {% block pagination %}
+    <div class="mt-8 text-center">
+        <div class="flex justify-center space-x-2 mt-8">
+            <ul class="flex items-center space-x-2">
+                {% for page in 1..reviews.getPageCount() %}
+                    <li>
+                        <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'page': page})) }}"
+                           class="px-4 py-2 text-sm rounded-md bg-gray-200 hover:bg-gray-300 transition-colors duration-200 {% if page == reviews.getCurrentPageNumber() %}bg-pink-700 text-white{% endif %}">
+                            {{ page }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
 {% endblock %}

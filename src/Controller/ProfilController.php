@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\ProfilPicture;
 use App\Form\UserType;
+use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,19 +15,48 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/profile')]
 class ProfilController extends AbstractController
 {
     #[Route(name: 'app_profile_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(PaginatorInterface $paginator, BookRepository $bookRepository, Request $request): Response
     {
         $user = $this->getUser();
+        if (!$user instanceof User) {
+            throw $this->createNotFoundException("L'utilisateur n'est pas connecté ou n'existe pas.");
+        }
+        $bookshelves = $user->getBookshelves();
 
+        $paginatedBooksByShelf = [];
+        foreach ($bookshelves as $bookshelf) {
+            // On récupère tous les livres de l'étagère, puis on les pagine
+            $query = $bookRepository->createQueryBuilder('b')
+                ->innerJoin('b.bookshelves', 'bs')
+                ->where('bs = :shelf') 
+                ->setParameter('shelf', $bookshelf)
+                ->getQuery();
+            
+
+            // On pagine les livres de cette étagère
+            $paginatedBooksByShelf[$bookshelf->getId()] = $paginator->paginate(
+                $query, // La requête qui récupère les livres de l'étagère
+                $request->query->getInt('page', 1), // Numéro de page
+                5 // Nombre de livres par page (tu peux ajuster ce nombre)
+            );
+        }
+
+        // On envoie les livres paginés par étagère à la vue
         return $this->render('profil/profile.html.twig', [
+            'paginatedBooksByShelf' => $paginatedBooksByShelf,
             'user' => $user,
+            'bookshelves' => $bookshelves,
         ]);
     }
+
+     
+    
     // Modifier son propre profil
     #[Route('/edit', name: 'profile_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher)
@@ -116,24 +146,20 @@ class ProfilController extends AbstractController
                 );
                 // dd($file);
                 $profilPicture->setImageUrl($filename);  // Utiliser setImageUrl pour enregistrer le nom de l'image
-                $profilPicture->setUser($user);  // Lier la photo de profil à l'utilisateur
-
-                $profilPicture->setFileSize($fileSize);  // Optionnel : Enregistrer la taille du fichier
-
-                $profilPicture->setFileFormat($fileExtension);  // Optionnel : Enregistrer le format du fichier
-
-
-                $profilPicture->setUploadDate(new \DateTime());  // Optionnel : Enregistrer la date de téléchargement
+                $profilPicture->setUser($user);  
+                $profilPicture->setFileSize($fileSize);  
+                $profilPicture->setFileFormat($fileExtension); 
+                $profilPicture->setUploadDate(new \DateTime());  
 
                 // Si un profil existe déjà, on le retire avant d'ajouter le nouveau
                 if ($user->getProfilPicture()->count() > 0) {
-                    $oldProfilPicture = $user->getProfilPicture()->first();  // On prend la première image de profil
+                    $oldProfilPicture = $user->getProfilPicture()->first();  
                     $user->removeProfilPicture($oldProfilPicture);  // Supprimer l'ancienne image de la collection
                     $entityManager->remove($oldProfilPicture);  // Supprimer l'ancienne image de la base de données
                 }
                   // Ajouter la nouvelle photo à l'utilisateur
                   $user->addProfilPicture($profilPicture); 
-                $entityManager->persist($profilPicture); // Enregistrer la photo dans la base de données
+                $entityManager->persist($profilPicture); 
                 
                 
             }

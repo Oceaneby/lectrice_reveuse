@@ -25,59 +25,80 @@ class BookType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title', null, [
-                'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
-            ])
-            ->add('description', null, [
-                'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
-            ])
-            ->add('isbn', null, [
-                'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
-            ])
-            ->add('publication_date', DateType::class, [
-                'widget' => 'single_text',
-                'html5' => true,
-                'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
-            ])
-            ->add('amazonUrl', TextType::class, [
-                'required' => false,
-                'label' => 'Amazon URL',
-            ])
-            ->add('fnacUrl', TextType::class, [
-                'required' => false,
-                'label' => 'Fnac URL',
-            ])
-            ->add('cover_image', FileType::class, [
-                'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500'],
-                'constraints' => [
-                    new Image([
-                        'mimeTypes' => ['image/jpeg', 'image/png'],
-                        'mimeTypesMessage' => 'Merci de télécharger une image au bon format'
-                    ])
-                    ],
-                'required' => false,
-                'data_class' => null,
-            ])
-            
-            ->add('authors', EntityType::class, [
-                'class' => Author::class,
-                'choice_label' => 'first_name',
-                'multiple' => true,  // permet de sélectionner plusieurs auteurs
-                'expanded' => true,
-                'attr' => ['class' => 'block w-25 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
-            ])
-            ->add('genres', EntityType::class, [
-                'class' => Genre::class,
-                'choice_label' => 'name',
-                'multiple' => true,
-                'expanded' => true,
-                'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
-            ])
-            ->add('publisher', EntityType::class, [
-                'class' => Publisher::class,
-                'choice_label' => 'name',
-                'attr' => ['class' => 'block w-50 p-3 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500']
-            ]);
+        ->add('title', null, [
+            'attr' => [
+                'class' => 'block w-full sm:w-3/4 p-4 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all duration-300'
+            ]
+        ])
+        ->add('description', null, [
+            'attr' => [
+                'class' => 'block w-full sm:w-3/4 p-4 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all duration-300'
+            ]
+        ])
+        ->add('isbn', null, [
+            'attr' => [
+                'class' => 'block w-full sm:w-3/4 p-4 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all duration-300'
+            ]
+        ])
+        ->add('publication_date', DateType::class, [
+            'widget' => 'single_text',
+            'html5' => true,
+            'attr' => [
+                'class' => 'block w-full sm:w-3/4 p-4 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all duration-300'
+            ]
+        ])
+        ->add('amazonUrl', TextType::class, [
+            'required' => false,
+            'label' => 'Amazon URL',
+            'attr' => [
+                'class' => 'block w-full sm:w-3/4 p-4 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all duration-300'
+            ]
+        ])
+        ->add('fnacUrl', TextType::class, [
+            'required' => false,
+            'label' => 'Fnac URL',
+            'attr' => [
+                'class' => 'block w-full sm:w-3/4 p-4 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all duration-300'
+            ]
+        ])
+        ->add('cover_image', FileType::class, [
+            'attr' => [
+                'class' => 'block w-full sm:w-3/4 p-4 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all duration-300'
+            ],
+            'constraints' => [
+                new Image([
+                    'mimeTypes' => ['image/jpeg', 'image/png'],
+                    'mimeTypesMessage' => 'Merci de télécharger une image au bon format'
+                ])
+            ],
+            'required' => false,
+            'data_class' => null,
+        ])
+        ->add('authors', EntityType::class, [
+            'class' => Author::class,
+            'choice_label' => 'first_name',
+            'multiple' => true,
+            'expanded' => true,
+            'attr' => [
+                'class' => 'block w-full sm:w-3/4 p-4 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all duration-300'
+            ]
+        ])
+        ->add('genres', EntityType::class, [
+            'class' => Genre::class,
+            'choice_label' => 'name',
+            'multiple' => true,
+            'expanded' => true,
+            'attr' => [
+                'class' => 'block w-full sm:w-3/4 p-4 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all duration-300'
+            ]
+        ])
+        ->add('publisher', EntityType::class, [
+            'class' => Publisher::class,
+            'choice_label' => 'name',
+            'attr' => [
+                'class' => 'block w-full sm:w-3/4 p-4 mt-2 mb-4 ml-4 border border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all duration-300'
+            ]
+        ]);
 
     }
     
