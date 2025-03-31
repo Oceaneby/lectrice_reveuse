@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Image;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class UserType extends AbstractType
 {
@@ -22,13 +23,23 @@ class UserType extends AbstractType
             ->add('username', TextType::class,[
                 'label' => 'Nom d\'utilisateur',
                 'required' => false,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => "Le nom d'utilisateur ne peut pas être vide.",
+                    ]),
+                ],
                 'label_attr' => [
                     'class' => 'block text-lg font-medium text-gray-700 mb-2',
                 ]
             ])
             ->add('first_name', TextType::class, [
                 'label' => 'Prénom',
-                'required' => false,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => "Le prénom ne peut pas être vide.",
+                    ]),
+                ],
+                'empty_data' => '',
                 'label_attr' => [
                     'class' => 'block text-lg font-medium text-gray-700 mb-2',
                     'placeholder' => '',
@@ -45,6 +56,11 @@ class UserType extends AbstractType
             ->add('email', EmailType::class, [
                 'label' => 'Email',
                 'required' => false,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => "Email indisponible.",
+                    ]),
+                ],
                 'label_attr' => [
                     'class' => 'block text-lg font-medium text-gray-700 mb-2',
                     'placeholder' => '',
@@ -100,8 +116,8 @@ class UserType extends AbstractType
                 ],
                 'constraints' => [
                     new Image([
-                        'mimeTypes' => ['image/jpeg', 'image/png'],
-                        'mimeTypesMessage' => 'Merci de télécharger une image valide (JPEG ou PNG)',
+                        'mimeTypes' => ['image/webp',],
+                        'mimeTypesMessage' => 'Merci de télécharger une image valide (WebP)',
                     ])
                 ]
             ]);

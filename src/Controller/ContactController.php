@@ -19,25 +19,13 @@ class ContactController extends AbstractController
     {
         // Créer une instance du formulaire Contact
         $form = $this->createForm(ContactType::class);
-
-        // Gérer la soumission du formulaire
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Récupérer les données du formulaire
             $data = $form->getData();
-            $emailAddress = $data['email']; // L'email de l'utilisateur
-            $message = $data['message']; // Le message de l'utilisateur
-
-            // Créer un email à envoyer
-            $email = (new Email())
-                ->from($emailAddress)
-                ->to('your_email@example.com') // Remplace par ton email
-                ->subject('New Contact Message')
-                ->text("Message from: $emailAddress\n\n$message");
-
-            // Envoi de l'email
-            $mailer->send($email);
+            $emailAddress = $data['email'];
+            $message = $data['message']; 
 
             // Ajouter un message flash pour confirmer l'envoi
             $this->addFlash('success', 'Your message has been sent successfully!');

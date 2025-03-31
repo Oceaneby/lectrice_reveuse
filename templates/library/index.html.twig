@@ -3,126 +3,135 @@
 {% block title %}Ma bibliothèque{% endblock %}
 
 {% block body %}
-    <div class="max-w-7xl mx-auto px-6 py-12">
-        <h1 class="text-4xl font-extrabold text-center text-gradient bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600 mb-16">Ma bibliothèque</h1>
+<div class="max-w-7xl mx-auto px-6 py-12">
+    <h1 class="text-4xl font-extrabold text-center text-gradient bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600 mb-16" id="page-title">Ma bibliothèque</h1>
 
-        <!-- Bouton "Ajouter une étagère" -->
-        <div class="text-center mb-10">
-            <a href="{{ path('app_library_create_shelf') }}" class="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg py-3 px-8 transition-all hover:scale-105 hover:from-green-600 hover:to-green-700 text-lg shadow-lg">Ajouter une étagère</a>
-        </div>
+    <section class="text-center mb-10">
+        <a href="{{ path('app_library_create_shelf') }}" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-lg py-3 px-8 transition-all hover:scale-105 hover:from-yellow-600 hover:to-yellow-700 text-lg shadow-lg" aria-label="Ajouter une étagère">
+            Ajouter une étagère
+        </a>
+    </section>
 
-        {% if library.bookshelves is not empty %}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-                {% for bookshelf in library.bookshelves %}
-                    <div class="bg-white rounded-lg shadow-xl overflow-hidden group transform transition-all hover:scale-105 hover:shadow-2xl">
-                        <div class="bg-indigo-500 text-white p-6">
-                            <h2 class="text-3xl font-semibold">{{ bookshelf.shelfName }}</h2>
-                        </div>
-                        <div class="p-6 bg-gradient-to-r from-white to-indigo-50">
-                            <!-- Affichage des livres avec pagination pour chaque étagère -->
-                            <div class="space-y-4">
-                                {% for book in paginatedBooksByShelf[bookshelf.id] %}
-                                    <div class="flex flex-col items-center space-y-4">
-                                        <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="Cover image" class="w-24 h-32 object-cover rounded-lg shadow-md transition-transform transform group-hover:scale-105" />
-                                        <div class="flex flex-col items-center space-y-2">
-                                            <h3 class="text-xl font-semibold text-gray-800 hover:text-indigo-600 text-center">{{ book.title }}</h3>
-                                            <p class="text-sm text-gray-600">Auteur : 
-                                                {% for author in book.getAuthors %}
-                                                    <a href="{{ path('app_author_show', {id: author.id}) }}" class="text-indigo-600 hover:text-indigo-800">{{ author.fullName }}</a>
-                                                    {% if not loop.last %}, {% endif %}
-                                                {% endfor %}
-                                            </p>
-
-                                            <p class="text-sm text-gray-500">Genres : 
-                                                {% for genre in book.genres %}
-                                                    <span>{{ genre.name }}</span>{% if not loop.last %}, {% endif %}
-                                                {% endfor %}
-                                            </p>
-                                        </div>
-                                        <!-- Formulaire pour retirer le livre de l'étagère -->
-                                        <form action="{{ path('app_library_remove_from_shelf', {bookId: book.id, shelfId: bookshelf.id}) }}" method="post" class="mt-4">
-                                            <button type="submit" class="bg-red-600 text-white rounded-lg py-2 px-5 transition-all hover:bg-red-700 hover:scale-105">Retirer de l'étagère</button>
-                                        </form>
-
-                                    </div>
-                                {% endfor %}
+    {% if library.bookshelves is not empty %}
+    <section aria-labelledby="bookshelves-section">
+        <h2 class="sr-only" id="bookshelves-section">Mes étagères</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+            {% for bookshelf in library.bookshelves %}
+            <article class="bg-white rounded-lg shadow-xl overflow-hidden group transform transition-all hover:scale-105 hover:shadow-2xl">
+                <header class="bg-pink-700 text-white p-6">
+                    <h3 class="text-3xl font-semibold" id="bookshelf-{{ bookshelf.id }}">{{ bookshelf.shelfName }}</h3>
+                </header>
+                <section class="p-6 bg-gradient-to-r from-white to-indigo-50">
+                    <!-- Affichage des livres avec pagination pour chaque étagère -->
+                    <div class="space-y-4">
+                        {% for book in paginatedBooksByShelf[bookshelf.id] %}
+                        <article class="flex flex-col items-center space-y-4" aria-labelledby="book-{{ book.id }}">
+                            <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="Cover image of {{ book.title }}" class="w-24 h-32 object-cover rounded-lg shadow-md transition-transform transform group-hover:scale-105" />
+                            <div class="flex flex-col items-center space-y-2">
+                                <h4 class="text-xl font-semibold text-gray-800 hover:text-indigo-600 text-center" id="book-title-{{ book.id }}">{{ book.title }}</h4>
+                                <p class="text-sm text-gray-600" aria-labelledby="author-list-{{ book.id }}">Auteur : 
+                                    {% for author in book.getAuthors %}
+                                        <a href="{{ path('app_author_show', {id: author.id}) }}" class="text-indigo-600 hover:text-indigo-800">{{ author.fullName }}</a>
+                                        {% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </p>
+                                <p class="text-sm text-gray-500" aria-labelledby="genre-list-{{ book.id }}">Genres : 
+                                    {% for genre in book.genres %}
+                                        <span>{{ genre.name }}</span>{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </p>
                             </div>
-
-                            <!-- Pagination -->
-                            {% if paginatedBooksByShelf[bookshelf.id].getTotalItemCount() > 0 %}
-                                <div class="mt-8 text-center">
-                                    <div class="flex justify-center space-x-2 mt-8">
-                                        <ul class="flex items-center space-x-2">
-                                            {% for page in 1..paginatedBooksByShelf[bookshelf.id].getPageCount() %}
-                                                <li>
-                                                    <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'page': page})) }}"
-                                                       class="px-4 py-2 text-sm rounded-md bg-gray-200 hover:bg-gray-300 transition-colors duration-200 {% if page == paginatedBooksByShelf[bookshelf.id].getCurrentPageNumber() %}bg-pink-700 text-white{% endif %}">
-                                                        {{ page }}
-                                                    </a>
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        </div>
+                            <!-- Formulaire pour retirer le livre de l'étagère -->
+                            <form action="{{ path('app_library_remove_from_shelf', {bookId: book.id, shelfId: bookshelf.id}) }}" method="post" class="mt-4" aria-labelledby="remove-book-form-{{ book.id }}">
+                                <button type="submit" class="bg-red-600 text-white rounded-lg py-2 px-5 transition-all hover:bg-red-700 hover:scale-105">Retirer de l'étagère</button>
+                            </form>
+                        </article>
+                        {% endfor %}
                     </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p class="text-center text-gray-600 text-xl">Aucune étagère dans votre bibliothèque.</p>
-        {% endif %}
-    </div>
 
-    <h2 class="text-2xl font-semibold text-center text-indigo-600 mt-12 mb-6">Livres non assignés à une étagère</h2>
+                    <!-- Pagination -->
+                    {% if paginatedBooksByShelf[bookshelf.id].getTotalItemCount() > 0 %}
+                    <section aria-labelledby="pagination-section-{{ bookshelf.id }}">
+                        <h4 class="sr-only" id="pagination-section-{{ bookshelf.id }}">Pagination des livres de l'étagère {{ bookshelf.shelfName }}</h4>
+                        <div class="mt-8 text-center">
+                            <div class="flex justify-center space-x-2 mt-8">
+                                <ul class="flex items-center space-x-2">
+                                    {% for page in 1..paginatedBooksByShelf[bookshelf.id].getPageCount() %}
+                                    <li>
+                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'page': page})) }}"
+                                           class="px-4 py-2 text-sm rounded-md bg-gray-200 hover:bg-gray-300 transition-colors duration-200 {% if page == paginatedBooksByShelf[bookshelf.id].getCurrentPageNumber() %}bg-pink-700 text-white{% endif %}"
+                                           aria-label="Page {{ page }}">{{ page }}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                    {% endif %}
+                </section>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% else %}
+    <section aria-labelledby="no-bookshelves">
+        <h2 class="text-center text-gray-600 text-xl" id="no-bookshelves">Aucune étagère dans votre bibliothèque.</h2>
+    </section>
+    {% endif %}
 
-    {% set booksWithoutBookshelf = [] %}
-    {% for book in library.books %}
-        {% if book.bookshelves is empty %}
-            {% set booksWithoutBookshelf = booksWithoutBookshelf|merge([book]) %}
-        {% endif %}
-    {% endfor %}
+    <section aria-labelledby="books-without-bookshelf">
+        <h2 class="text-2xl font-semibold text-center text-indigo-600 mt-12 mb-6" id="books-without-bookshelf">Livres non assignés à une étagère</h2>
+        
+        {% set booksWithoutBookshelf = [] %}
+        {% for book in library.books %}
+            {% if book.bookshelves is empty %}
+                {% set booksWithoutBookshelf = booksWithoutBookshelf|merge([book]) %}
+            {% endif %}
+        {% endfor %}
 
-    {% if booksWithoutBookshelf is not empty %}
+        {% if booksWithoutBookshelf is not empty %}
         <div class="bg-white rounded-lg shadow-lg p-6">
             <ul class="space-y-4">
                 {% for book in booksWithoutBookshelf %}
-                    <li class="flex items-center space-x-4">
-                        <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="Cover image" class="w-24 h-32 object-cover rounded-lg shadow-md" />
-                        <div class="flex flex-col">
-                            <h3 class="text-lg font-semibold text-gray-800">{{ book.title }}</h3>
-                            <p class="text-sm text-gray-600">Auteur : {% for author in book.getAuthors %}
-                                                <a href="{{ path('app_author_show', {id: author.id}) }}" class="text-indigo-600 hover:text-indigo-800">{{ author.fullName }}</a>
-                                                {% if not loop.last %}, {% endif %}
-                                            {% endfor %}</p>
-                            {# Affichage des genres du livre (plusieurs genres possibles) #}
-                            <p class="text-sm text-gray-500">Genres : 
-                                {% for genre in book.genres %}
-                                    <span>{{ genre.name }}</span>{% if not loop.last %}, {% endif %}
+                <li class="flex items-center space-x-4" id="book-{{ book.id }}">
+                    <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="Cover image of {{ book.title }}" class="w-24 h-32 object-cover rounded-lg shadow-md" />
+                    <div class="flex flex-col">
+                        <h3 class="text-lg font-semibold text-gray-800">{{ book.title }}</h3>
+                        <p class="text-sm text-gray-600">Auteur : 
+                            {% for author in book.getAuthors %}
+                                <a href="{{ path('app_author_show', {id: author.id}) }}" class="text-indigo-600 hover:text-indigo-800">{{ author.fullName }}</a>
+                                {% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        <p class="text-sm text-gray-500">Genres : 
+                            {% for genre in book.genres %}
+                                <span>{{ genre.name }}</span>{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+
+                        <!-- Formulaire pour ajouter le livre à une étagère -->
+                        <form action="{{ path('app_library_add_to_shelf', {bookId: book.id}) }}" method="post" class="mt-4" aria-labelledby="add-book-form-{{ book.id }}">
+                            <label for="shelf-select-{{ book.id }}" class="sr-only">Sélectionner une étagère</label>
+                            <select name="shelfId" id="shelf-select-{{ book.id }}" class="bg-indigo-100 border border-indigo-300 rounded-lg py-2 px-4 mb-2">
+                                {% for shelf in library.bookshelves %}
+                                    <option value="{{ shelf.id }}">{{ shelf.shelfName }}</option>
                                 {% endfor %}
-                            </p>
+                            </select>
+                            <button type="submit" class="bg-indigo-600 text-white rounded-lg py-2 px-4 transition hover:bg-indigo-700" aria-label="Ajouter à l'étagère">Ajouter à l'étagère</button>
+                        </form>
 
-                            {# Formulaire pour ajouter le livre à une étagère #}
-                            <form action="{{ path('app_library_add_to_shelf', {bookId: book.id}) }}" method="post" class="mt-4">
-                                <select name="shelfId" class="bg-indigo-100 border border-indigo-300 rounded-lg py-2 px-4 mb-2">
-                                    {% for shelf in library.bookshelves %}
-                                        <option value="{{ shelf.id }}">{{ shelf.shelfName }}</option>
-                                    {% endfor %}
-                                </select>
-                                <button type="submit" class="bg-indigo-600 text-white rounded-lg py-2 px-4 transition hover:bg-indigo-700">Ajouter à l'étagère</button>
-                            </form>
-
-                            {# Formulaire pour supprimer le livre de la bibliothèque #}
-                            <form action="{{ path('app_library_remove', {bookId: book.id}) }}" method="post" class="mt-4">
-                                <button type="submit" class="bg-red-600 text-white rounded-lg py-2 px-4 transition hover:bg-red-700">Supprimer de la bibliothèque</button>
-                            </form>
-                        </div>
-                    </li>
+                        <!-- Formulaire pour supprimer le livre de la bibliothèque -->
+                        <form action="{{ path('app_library_remove', {bookId: book.id}) }}" method="post" class="mt-4" aria-labelledby="remove-book-form-{{ book.id }}">
+                            <button type="submit" class="bg-red-600 text-white rounded-lg py-2 px-4 transition hover:bg-red-700" aria-label="Supprimer de la bibliothèque">Supprimer de la bibliothèque</button>
+                        </form>
+                    </div>
+                </li>
                 {% endfor %}
             </ul>
         </div>
-    {% else %}
-        <p class="text-center text-gray-600">Aucun livre n'est actuellement sans étagère.</p>
-    {% endif %}
+        {% else %}
+        <p class="text-center text-gray-600 mb-8">Aucun livre n'est actuellement sans étagère.</p>
+        {% endif %}
+    </section>
 </div>
 {% endblock %}

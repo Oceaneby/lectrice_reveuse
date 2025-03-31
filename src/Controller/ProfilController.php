@@ -38,15 +38,13 @@ class ProfilController extends AbstractController
                 ->setParameter('shelf', $bookshelf)
                 ->getQuery();
             
-
             // On pagine les livres de cette étagère
             $paginatedBooksByShelf[$bookshelf->getId()] = $paginator->paginate(
                 $query, // La requête qui récupère les livres de l'étagère
                 $request->query->getInt('page', 1), // Numéro de page
-                5 // Nombre de livres par page (tu peux ajuster ce nombre)
+                5 
             );
         }
-
         // On envoie les livres paginés par étagère à la vue
         return $this->render('profil/profile.html.twig', [
             'paginatedBooksByShelf' => $paginatedBooksByShelf,
@@ -55,14 +53,12 @@ class ProfilController extends AbstractController
         ]);
     }
 
-     
-    
     // Modifier son propre profil
     #[Route('/edit', name: 'profile_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher)
     {
         /** @var \App\Entity\User $user */
-        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+        $user = $this->getUser(); 
         // dd($user);
 
         if (!$user) {
@@ -77,22 +73,30 @@ class ProfilController extends AbstractController
 
         $form->handleRequest($request);
       
-        // dd('Form is being handled');
-        // dd($form->getData());
+    if ($form->isSubmitted()) {
+        // Vérification si le champ first_name est vide ou null après soumission
+        if ($user->getFirstName() === null || trim($user->getFirstName() === '')) {
+            $this->addFlash('error', 'Le prénom est requis.');
+            return $this->redirectToRoute('profile_edit');
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // dd('Form submitted and valid');
-            // Vérifier si un fichier a été téléchargé
+        }
+
+        // Si le formulaire est valide, on procède à la mise à jour
+        if ($form->isValid()) {
+            if ($user->getFirstName() === null) {
+                $user->setFirstName('');  // Définit une chaîne vide si le champ est null
+            }
+
+            // Gestion du mot de passe et de la validation
             $oldPassword = $form->get('oldPassword')->getData();
             $password = $form->get('password')->getData();
-            $ConfirmPassword = $form->get('ConfirmPassword')->getData();
+            $confirmPassword = $form->get('ConfirmPassword')->getData();
 
-            if (($password || $oldPassword) || $ConfirmPassword) {
-
+            if ($password || $oldPassword || $confirmPassword) {
                 if (!$oldPassword) {
                     $this->addFlash('error', 'Veuillez renseigner votre ancien mot de passe.');
                     return $this->redirectToRoute('profile_edit');
-                 }
+                }
 
                 if (!$password) {
                     $this->addFlash('error', 'Veuillez renseigner un nouveau mot de passe.');
@@ -109,72 +113,76 @@ class ProfilController extends AbstractController
                     return $this->redirectToRoute('profile_edit');
                 }
 
-                if (($oldPassword && $password) && !$ConfirmPassword) {
-                    $this->addFlash('error', 'Veuillez confirmer votre nouveau mot de passe.');
-                    return $this->redirectToRoute('profile_edit');
-                }
-                
-                if ($password !== $ConfirmPassword) {
+                if ($password !== $confirmPassword) {
                     $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
                     return $this->redirectToRoute('profile_edit');
                 }
-              
 
-            // Si tout est correct, on met à jour le mot de passe
+                // Mise à jour du mot de passe
                 $hashedPassword = $passwordHasher->hashPassword($user, $password);
                 $user->setPassword($hashedPassword);
             }
-    
-        
-        //  dd($form->getErrors(true));
 
-          
             /** @var UploadedFile $file */
-            
             $file = $form->get('profilPicture')->getData();
-            
-            if ($file && file_exists($file->getPathname())) {
-                // Créer une nouvelle instance de ProfilPicture et enregistrer l'image
-                $profilPicture = new ProfilPicture();
-                $filename = uniqid() . '.' . $file->guessExtension(); // Générer un nom unique pour le fichier
-                $fileExtension = $file->guessExtension();
-                $fileSize =$file->getSize();
 
-                $file->move(
-                    $this->getParameter('profil_pictures_directory'), // Définir le répertoire pour stocker l'image
-                    $filename
-                );
-                // dd($file);
-                $profilPicture->setImageUrl($filename);  // Utiliser setImageUrl pour enregistrer le nom de l'image
-                $profilPicture->setUser($user);  
-                $profilPicture->setFileSize($fileSize);  
-                $profilPicture->setFileFormat($fileExtension); 
-                $profilPicture->setUploadDate(new \DateTime());  
+            if ($file) {
+                // Gestion de l'upload de l'image de profil
+                $profilPicture = new ProfilPicture();
+                $filename = uniqid() . '.' . $file->guessExtension();
+                $fileExtension = $file->guessExtension();
+                $fileSize = $file->getSize();
+
+                try {
+                    $file->move(
+                        $this->getParameter('profil_pictures_directory'),
+                        $filename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Une erreur s\'est produite lors de l\'upload du fichier.');
+                    return $this->redirectToRoute('profile_edit');
+                }
+
+                $profilPicture->setImageUrl($filename);
+                $profilPicture->setUser($user);
+                $profilPicture->setFileSize($fileSize);
+                $profilPicture->setFileFormat($fileExtension);
+                $profilPicture->setUploadDate(new \DateTime());
 
                 // Si un profil existe déjà, on le retire avant d'ajouter le nouveau
                 if ($user->getProfilPicture()->count() > 0) {
-                    $oldProfilPicture = $user->getProfilPicture()->first();  
-                    $user->removeProfilPicture($oldProfilPicture);  // Supprimer l'ancienne image de la collection
-                    $entityManager->remove($oldProfilPicture);  // Supprimer l'ancienne image de la base de données
+                    $oldProfilPicture = $user->getProfilPicture()->first();
+                    $user->removeProfilPicture($oldProfilPicture);
+                    $entityManager->remove($oldProfilPicture);
                 }
-                  // Ajouter la nouvelle photo à l'utilisateur
-                  $user->addProfilPicture($profilPicture); 
-                $entityManager->persist($profilPicture); 
-                
-                
+
+                $user->addProfilPicture($profilPicture);
+                $entityManager->persist($profilPicture);
             }
-    
+
             // Sauvegarder l'utilisateur
             $entityManager->persist($user);
             $entityManager->flush();
+
+            // Message de succès
             $this->addFlash('success', 'Vos informations ont été mises à jour.');
             return $this->redirectToRoute('app_home');
+        } else {
+            // Si le formulaire n'est pas valide, afficher les erreurs
+            foreach ($form->all() as $field) {
+                foreach ($field->getErrors() as $error) {
+                    $this->addFlash('error', $error->getMessage());
+                }
+            }
         }
-    
-    
-        return $this->render('profil/index.html.twig', [
-            'form' => $form->createView(),
-            'user' => $user,
-        ]);
     }
+
+    // Rendu du formulaire dans la vue
+    return $this->render('profil/index.html.twig', [
+        'form' => $form->createView(),
+        'user' => $user,
+    ]);
+    }
+    
+    
 }

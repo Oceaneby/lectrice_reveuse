@@ -3,24 +3,24 @@
 {% block title %}Modifier mon commentaire{% endblock %}
 
 {% block body %}
-<div class="max-w-4xl mx-auto px-6 py-10 bg-white rounded-xl shadow-lg">
-    <h1 class="text-3xl font-semibold text-gray-800 mb-6 text-center">Modifier mon commentaire</h1>
+<div class="max-w-4xl mx-auto px-6 py-10 bg-white rounded-xl shadow-lg" aria-labelledby="edit-comment-title">
+    <h1 class="text-3xl font-semibold text-gray-800 mb-6 text-center" id="edit-comment-title">Modifier mon commentaire</h1>
 
     {{ form_start(form) }}
-    <div class="space-y-6">
-
+    <section class="space-y-6" aria-labelledby="comment-form">
+        <h2 class="sr-only" id="comment-form">Formulaire de modification de commentaire</h2>
         <!-- Champ Commentaire -->
         <div>
             {{ form_label(form.review_text, null, {'attr': {'class': 'text-lg font-medium text-gray-700'}}) }}
             {{ form_widget(form.review_text, {'attr': {'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500'}}) }}
         </div>
-
         <!-- Note -->
         <div>
             {{ form_label(form.rating, null, {'attr': {'class': 'text-lg font-medium text-gray-700'}}) }}
-            <div class="flex space-x-4">
+            <div class="flex space-x-4" role="radiogroup" aria-labelledby="rating-group">
+                <h3 class="sr-only" id="rating-group">Sélectionnez une note</h3>
                 {% for choice in form.rating %}
-                    <div class="relative">
+                    <div class="relative" role="radio" aria-checked="{{ choice.vars.value == form.rating.vars.value ? 'true' : 'false' }}" aria-labelledby="{{ choice.vars.id }}">
                         {{ form_widget(choice, {'attr': {'class': 'hidden'}}) }}
                         <label for="{{ choice.vars.id }}" class="cursor-pointer text-2xl text-gray-300 hover:text-yellow-400 transition-colors duration-200">
                             ★
@@ -29,14 +29,12 @@
                 {% endfor %}
             </div>
         </div>
-
-        <!-- Bouton de soumission -->
         <div class="text-center">
             <button type="submit" class="w-full px-6 py-3 mt-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out">
                 Enregistrer
             </button>
         </div>
-    </div>
+    </section>
     {{ form_end(form) }}
 </div>
 {% endblock %}

@@ -30,7 +30,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $first_name = null;
+    #[Assert\NotBlank(message: "Le prénom ne peut pas être vide.")] 
+    #[Assert\Length(min: 2, minMessage: "Le prénom doit comporter au moins {{ limit }} caractères.")] 
+    private ?string $first_name = '';
 
     #[ORM\Column(length: 255)]
     private ?string $last_name = null;
@@ -316,5 +318,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+    public function __toString(): string
+    {
+        return $this->first_name . ' ' . $this->last_name;
     }
 }
