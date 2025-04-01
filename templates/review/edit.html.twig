@@ -7,12 +7,12 @@
         <h1 id="my-comments-title" class="text-3xl font-semibold text-gray-800 text-center mb-8">Mes commentaires</h1>
         <ul class="space-y-6" role="list">
             {% for review in reviews|sort((a, b) => b.getReviewDate() <=> a.getReviewDate()) %}
-                <li id="review-{{ review.id }}" class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300" aria-labelledby="review-{{ review.id }}-title">
+                <li id="review-{{ review.id }}" class="bg-gray-200 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300" aria-labelledby="review-{{ review.id }}-title">
                     <section class="flex items-center mb-4">
                         <img src="{{ asset('uploads/book_cover/' ~ review.book.coverImage) }}" alt="{{ review.book.title }}" class="w-16 h-24 object-cover rounded-lg">
                         <div class="ml-4">
                             <p id="review-{{ review.id }}-title" class="font-semibold text-lg text-gray-800">{{ review.book.title }}</p>
-                            <p class="text-sm text-gray-500">
+                            <p class="text-sm text-gray-700">
                                 {% for author in review.book.getAuthors %}
                                     {{ author.firstName }} {{ author.lastName }}{% if not loop.last %}, {% endif %}
                                  {% endfor %}
@@ -29,16 +29,16 @@
                         {% endfor %}
                     </section>
                     <section>
-                        <p class="text-sm text-gray-500" aria-label="Date de publication">{{ review.getReviewDate()|date('d/m/Y H:i') }}</p>
+                        <p class="text-sm text-gray-700" aria-label="Date de publication">{{ review.getReviewDate()|date('d/m/Y H:i') }}</p>
                     </section>
                     <section>
-                        <a href="{{ path('profile_edit_review', {'id': review.id}) }}" class="text-blue-600 hover:underline mt-2 inline-block" aria-label="Modifier le commentaire">
+                        <a href="{{ path('profile_edit_review', {'id': review.id}) }}" class="text-blue-700 hover:underline mt-2 inline-block" aria-label="Modifier le commentaire">
                             Modifier
                         </a>
                     </section>
                     {% if app.user == review.user %}
                         <section>
-                            <button type="button" data-review-id="{{ review.id }}" data-csrf-token="{{ csrf_token('delete' ~ review.id) }}" class="delete-review text-red-500 hover:underline mt-2 inline-block" aria-label="Supprimer le commentaire">Supprimer</button>
+                            <button type="button" data-review-id="{{ review.id }}" data-csrf-token="{{ csrf_token('delete' ~ review.id) }}" class="delete-review text-red-700 hover:underline mt-2 inline-block" aria-label="Supprimer le commentaire">Supprimer</button>
                         </section>
                     {% endif %}
                 </li>
@@ -49,7 +49,7 @@
     {% block pagination %}
     <div class="mt-8 text-center mb-8">
         <div class="flex justify-center space-x-2 mt-8">
-            <ul class="flex items-center space-x-2" role="navigation" aria-label="Pagination">
+            <ul class="flex items-center space-x-2"  aria-label="Pagination">
                 {% for page in 1..reviews.getPageCount() %}
                     <li>
                         <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'page': page})) }}"

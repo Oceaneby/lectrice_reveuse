@@ -77,7 +77,7 @@
             {% if reviews is not empty %}
                 <div class="mt-4">
                     {% for review in reviews %}
-                        <div id="review-{{ review.id }}" class="bg-gray-100 p-4 mb-4 rounded-md">
+                        <div id="review-{{ review.id }}" class="bg-gray-200 p-4 mb-4 rounded-md">
                             <div class="flex-none w-12 h-12 mr-4">
                                 {% if review.user.profilPicture|length > 0 %}
                                     <img src="{{ asset('uploads/profil_pictures/' ~ review.user.profilPicture[0].getImageUrl) }}" alt="Photo de profil de {{ review.user.username }}" class="w-12 h-12 rounded-full object-cover mb-4">
@@ -87,7 +87,7 @@
                             </div>
                             <p><strong>{{ review.user.username }}</strong> a écrit :</p>
                             <p class="mt-2 review-text">{{ review.reviewText }}</p>
-                            <p class="text-sm text-gray-500 mt-2 review-date">{{ review.reviewDate|date('d/m/Y H:i') }}</p>
+                            <p class="text-sm text-gray-600 mt-2 review-date">{{ review.reviewDate|date('d/m/Y H:i') }}</p>
                             <p class="text-sm mt-2">
                                 {% for i in 1..5 %}
                                     <span class="inline-block w-5 h-5 {{ i <= review.rating ? 'text-yellow-500' : 'text-gray-300' }} text-xl" role="img" aria-label="Étoile {{ i <= review.rating ? 'remplie' : 'vide' }}">
@@ -96,7 +96,7 @@
                                 {% endfor %}
                             </p>
                             {% if app.user == review.user %}
-                                <a href="{{ path('app_edit_review', {'id': review.id}) }}" class="text-blue-500 hover:underline mt-2 inline-block" aria-label="Modifier ce commentaire">Modifier</a>
+                                <a href="{{ path('app_edit_review', {'id': review.id}) }}" class="text-blue-700 hover:underline mt-2 inline-block" aria-label="Modifier ce commentaire">Modifier</a>
                                 <button type="button" data-review-id="{{ review.id }}" data-csrf-token="{{ csrf_token('delete' ~ review.id) }}" class="delete-review text-red-500 hover:underline mt-2 inline-block" aria-label="Supprimer ce commentaire">Supprimer</button>
                             {% endif %}
                         </div>
@@ -145,7 +145,7 @@
         {% endif %}
 
         <div class="mt-8 text-center">
-            <a href="{{ path('app_home') }}" class="text-blue-500 hover:underline text-lg" aria-label="Retour à la liste des livres">
+            <a href="{{ path('app_home') }}" class="text-blue-700 hover:underline text-lg" aria-label="Retour à la liste des livres">
                 Retour à la liste des livres
             </a>
         </div>

@@ -18,6 +18,7 @@
 		{% endblock %}
 	</head>
 	<body class="flex flex-col min-h-screen">
+	 <header>
 		<!-- Navbar -->
 		<nav class="bg-gray-900 text-white shadow-md py-4" role="navigation" aria-label="Menu principal">
 			<div class="container mx-auto px-6 flex items-center justify-between">
@@ -73,15 +74,16 @@
 				</div>
 				<div class="hidden md:flex items-center space-x-4">
 					{% if app.user %}
-						<a href="{{ path('app_logout') }}" class="bg-transparent border-2 border-pink-700 hover:bg-pink-700 hover:text-white text-pink-700 py-2 px-4 rounded-lg transition" aria-label="Se déconnecter">Se déconnecter</a>
+						<a href="{{ path('app_logout') }}" class="bg-transparent border-2 border-pink-500 hover:bg-pink-500 hover:text-white text-pink-500 py-2 px-4 rounded-lg transition" aria-label="Se déconnecter">Se déconnecter</a>
 					{% else %}
 						<a href="{{ path('app_register') }}" class="bg-pink-700 hover:bg-pink-800 text-white py-2 px-4 rounded-lg transition" aria-label="S'inscrire">S'inscrire</a>
-						<a href="{{ path('app_login') }}" class="bg-transparent border-2 border-pink-700 hover:bg-pink-700 hover:text-white text-pink-700 py-2 px-4 rounded-lg transition" aria-label="Se connecter">Se connecter</a>
+						<a href="{{ path('app_login') }}" class="bg-transparent border-2 border-pink-500 hover:bg-pink-700 hover:text-white text-pink-500 py-2 px-4 rounded-lg transition" aria-label="Se connecter">Se connecter</a>
 					{% endif %}
-					<a href="{{ path('app_profile_index') }}" class="bg-transparent border-2 border-pink-700 hover:bg-pink-700 hover:text-white text-pink-700 py-2 px-4 rounded-lg transition" aria-label="Accéder à mon compte">Mon compte</a>
+					<a href="{{ path('app_profile_index') }}" class="bg-transparent border-2 border-pink-500 hover:bg-pink-700 hover:text-white text-pink-500 py-2 px-4 rounded-lg transition" aria-label="Accéder à mon compte">Mon compte</a>
 				</div>
 			</div>
 		</nav>
+	</header>	
 		<!-- Menu mobile (menu burger) -->
 <div id="mobile-menu" class="md:hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50 hidden">
     <div class="bg-white p-8 rounded-lg shadow-lg w-64">
