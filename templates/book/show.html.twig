@@ -12,13 +12,16 @@
                 <div class="md:ml-6 mt-4 md:mt-0 flex flex-col justify-between w-full md:w-2/3">
                     <h1 class="text-4xl font-semibold text-gray-800">{{ book.title }}</h1>
                     <p id="book-description" class="text-lg mt-4 text-gray-600">{{ book.description }}</p>
+                    
+                    <!-- Informations du livre -->
                     <section class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div class="flex flex-col">
                             <span class="font-semibold text-gray-700">Auteurs :</span>
                             <span class="text-gray-600" aria-describedby="authors-list">
-                            {% for author in book.authors %}
-                                {{ author.firstName }} {{ author.lastName }}{% if not loop.last %}, {% endif %}
-                            {% endfor %}</span>
+                                {% for author in book.authors %}
+                                    {{ author.firstName }} {{ author.lastName }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </span>
                         </div>
                         <div class="flex flex-col">
                             <span class="font-semibold text-gray-700">Maison d'édition :</span>
@@ -43,20 +46,22 @@
                             </div>
                         {% endif %}
                     </section>
-                    <section class="mt-6 flex space-x-4">
+                    
+                    <!-- Liens d'achat -->
+                    <section class="mt-6 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
                         {% if book.amazonUrl %}
-                            <a href="{{ book.amazonUrl }}" target="_blank" class="bg-yellow-400 text-black px-6 py-2 rounded-md hover:bg-yellow-500 transition duration-300 text-lg text-center" aria-label="Acheter sur Amazon">
+                            <a href="{{ book.amazonUrl }}" target="_blank" class="bg-yellow-400 text-black px-6 py-3 rounded-md hover:bg-yellow-500 transition duration-300 text-lg text-center w-full md:w-auto" aria-label="Acheter sur Amazon">
                                 Acheter sur Amazon
                             </a>
                         {% endif %}
                         {% if book.fnacUrl %}
-                            <a href="{{ book.fnacUrl }}" target="_blank" class="bg-yellow-500 text-black px-6 py-2 rounded-md hover:bg-yellow-600 transition duration-600 text-lg text-center" aria-label="Acheter sur Fnac">
+                            <a href="{{ book.fnacUrl }}" target="_blank" class="bg-yellow-500 text-black px-6 py-3 rounded-md hover:bg-yellow-600 transition duration-300 text-lg text-center w-full md:w-auto" aria-label="Acheter sur Fnac">
                                 Acheter sur Fnac
                             </a>
                         {% endif %}
                         {% if app.user %}
-                            <form action="{{ path('app_library_add', {'bookId': book.id}) }}" method="POST" class="flex items-center">
-                                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-300 text-lg text-center" aria-label="Ajouter ce livre à ma bibliothèque">
+                            <form action="{{ path('app_library_add', {'bookId': book.id}) }}" method="POST" class="flex items-center w-full md:w-auto">
+                                <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition duration-300 text-lg text-center w-full" aria-label="Ajouter ce livre à ma bibliothèque">
                                     Ajouter à ma bibliothèque
                                 </button>
                             </form>
@@ -65,6 +70,7 @@
                 </div>
             </div>
         </div>
+
         <!-- Affichage des commentaires -->
         <section class="mt-8">
             <h2 class="text-2xl font-semibold text-gray-800">Commentaires</h2>
@@ -76,7 +82,6 @@
                                 {% if review.user.profilPicture|length > 0 %}
                                     <img src="{{ asset('uploads/profil_pictures/' ~ review.user.profilPicture[0].getImageUrl) }}" alt="Photo de profil de {{ review.user.username }}" class="w-12 h-12 rounded-full object-cover mb-4">
                                 {% else %}
-                                    <!-- Aucune image affichée si pas de photo de profil -->
                                     <div class="w-12 h-12 rounded-full bg-gray-300" aria-label="Photo de profil non disponible"></div>
                                 {% endif %}
                             </div>
@@ -84,7 +89,6 @@
                             <p class="mt-2 review-text">{{ review.reviewText }}</p>
                             <p class="text-sm text-gray-500 mt-2 review-date">{{ review.reviewDate|date('d/m/Y H:i') }}</p>
                             <p class="text-sm mt-2">
-                                <!-- Affichage des étoiles pour la note -->
                                 {% for i in 1..5 %}
                                     <span class="inline-block w-5 h-5 {{ i <= review.rating ? 'text-yellow-500' : 'text-gray-300' }} text-xl" role="img" aria-label="Étoile {{ i <= review.rating ? 'remplie' : 'vide' }}">
                                         ★
@@ -102,6 +106,7 @@
                 <p class="text-gray-600">Aucun commentaire pour ce livre.</p>
             {% endif %}
         </section>
+
         <!-- Formulaire d'ajout de commentaire -->
         {% if app.user %}
             <section class="mt-8 bg-white p-6 rounded-lg shadow-md">
@@ -119,13 +124,11 @@
                         'attr': {'class': 'block w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none' }
                     }) }}
                 </div>
-                <!-- Affichage des étoiles interactives -->
                 <div class="mt-4">
                     {{ form_label(form.rating, null, {'attr': {'class': 'text-lg font-medium text-gray-700'}}) }}
                     <div class="flex space-x-4" role="group" aria-labelledby="rating-label">
                         {% for choice in form.rating %}
                             <div class="relative">
-                                <!-- Cacher le radio bouton -->
                                 {{ form_widget(choice, {'attr': {'class': 'hidden'}}) }}
                                 <label for="{{ choice.vars.id }}" class="cursor-pointer text-2xl text-gray-300 hover:text-yellow-400 transition-colors duration-200" aria-label="Note {{ loop.index }}">
                                     ★
@@ -140,6 +143,7 @@
                 {{ form_end(form) }}
             </section>
         {% endif %}
+
         <div class="mt-8 text-center">
             <a href="{{ path('app_home') }}" class="text-blue-500 hover:underline text-lg" aria-label="Retour à la liste des livres">
                 Retour à la liste des livres
