@@ -86,7 +86,7 @@
 	</header>	
 		<!-- Menu mobile (menu burger) -->
 <div id="mobile-menu" class="md:hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50 hidden">
-    <div class="bg-white p-8 rounded-lg shadow-lg w-64">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-64 ">
         <button id="menu-close" class="text-black absolute top-4 right-4">
             <i class="fas fa-times"></i>
         </button>
@@ -128,12 +128,10 @@
         </ul>
     </div>
 </div>
-
 		<main class="flex-grow">
 			{% block body %}
 			{% endblock %}
 		</main>
-
 		<!-- Footer -->
 		<footer class="bg-gray-900 text-white py-8 mt-auto" aria-labelledby="footer">
 			<div class="container mx-auto px-6">
@@ -142,74 +140,35 @@
 						<img src="{{ asset('/images/LR.png') }}" alt="Logo LR Lectrice Rêveuse" class="h-10">
 					</section>
 					<section class="flex space-x-8">
+						<p class="hover:text-indigo-400 text-xs" aria-label="Copyright tous droits réserver">&copy; 2025 Lectrice Rêveuse. Tous droits réservés.</p>
 						<a href="{{ path('app_home') }}" class="hover:text-indigo-400 text-xs" aria-label="Retour à la page d'accueil">Accueil</a>
 						<a href="{{ path('app_contact') }}" class="hover:text-indigo-400 text-xs" aria-label="Contactez-nous">Contact</a>
-						<a href="#" class="hover:text-indigo-400 text-xs" aria-label="Mentions légales">Mentions légales</a>
+						<a href="{{ path('app_mentions_legales') }}" class="hover:text-indigo-400 text-xs" aria-label="Mentions légales">Mentions légales</a>
+						<a href="{{ path('app_politiques_de_confidentialite') }}" class="hover:text-indigo-400 text-xs" aria-label="Mentions légales">Politique de confidentialité</a>
 					</section>
 				</div>
 			</div>
 		</footer>
+		<div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-gray-900 text-white py-4 text-center z-50 hidden">
+    		<p class="mb-2">Ce site utilise des cookies pour améliorer votre expérience. En cliquant sur "Accepter et fermer", vous acceptez notre politique de cookies.</p>
+    		<button id="accept-cookies" class="bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded-lg">
+        		Accepter et fermer
+    		</button>
+		</div>
 
 		{% block javascripts %}
 			{{ encore_entry_script_tags('app') }}
 			<script>
 				const searchUrl = '{{ path('app_book_search') }}'; 
 			</script>
+			<script src="{{ asset('js/cookies.js') }}" ></script>
+			<script src="{{ asset('js/menu_deroulant.js') }}" defer></script>
+			<script src="{{ asset('js/menu_burger.js') }}" defer></script>
 			<script src="{{ asset('js/search.js') }}" defer></script>
 			<script src="{{ asset('js/review_edit.js') }}" defer></script>
 			<script src="{{ asset('js/review_delete.js') }}" defer></script>
 			<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-			<script> 
-				document.addEventListener('DOMContentLoaded', function () {
-					const universeTrigger = document.getElementById('universe-trigger');
-					const universeMenu = document.getElementById('universe-menu');
-					const universeDropdown = document.getElementById('universe-dropdown');
-
-					let hideTimeout;
-
-					if (universeTrigger && universeMenu) {
-						universeDropdown.addEventListener('mouseenter', function () {
-							clearTimeout(hideTimeout); // Empêche de cacher si on y revient vite
-							universeMenu.classList.remove('hidden');
-						});
-
-						universeDropdown.addEventListener('mouseleave', function () {
-							hideTimeout = setTimeout(() => {
-								universeMenu.classList.add('hidden');
-							}, 200); // 200ms de marge
-						});
-
-						universeTrigger.addEventListener('click', function (e) {
-							e.preventDefault();
-						});
-					}
-				});
-			</script>
-			<script>
-			document.addEventListener('DOMContentLoaded', function () {
-    // Gestion du menu burger
-    const menuToggle = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const menuClose = document.getElementById('menu-close');
-
-    menuToggle.addEventListener('click', function () {
-        mobileMenu.classList.toggle('hidden');
-    });
-
-    menuClose.addEventListener('click', function () {
-        mobileMenu.classList.add('hidden');
-    });
-
-    // Gestion du sous-menu "Univers" sur mobile
-    const universeToggle = document.getElementById('universe-toggle');
-    const universeSubmenu = document.getElementById('universe-submenu');
-
-    universeToggle.addEventListener('click', function () {
-        universeSubmenu.classList.toggle('hidden');
-    });
-});
-			</script>
 		{% endblock %}
+		
 	</body>
 </html>

@@ -47,8 +47,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $registration_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    
-    // #[Assert\Date(message: 'Veuillez entrer une date valide.')]
     #[Assert\LessThan("today", message:'La date de naissance doit être dans le passé.')]
     #[Assert\GreaterThan("1900-01-01", message: "La date de naissance doit être après le 1er janvier 1900.")]
     private ?\DateTimeInterface $birth_date = null;
