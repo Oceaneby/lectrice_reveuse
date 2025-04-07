@@ -130,12 +130,12 @@ final class BookController extends AbstractController
          $form->handleRequest($request);
  
          if ($form->isSubmitted() && $form->isValid()) {
-             // Associer le livre et l'utilisateur au commentaire
+        
              $review->setBook($book);
              $review->setUser($this->getUser()); 
              $review->setReviewDate(new \DateTime());
  
-             // Enregistrer la revue dans la base de données
+           
              $entityManager->persist($review);
              $entityManager->flush();
  

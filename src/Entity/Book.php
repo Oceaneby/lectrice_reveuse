@@ -32,9 +32,7 @@ class Book
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $cover_image = null;
 
-    // #[ORM\ManyToOne(inversedBy: 'books')]
-    // #[ORM\JoinColumn(nullable: false)]
-    // private ?Author $author = null;
+   
     #[ORM\ManyToMany(targetEntity: Author::class, inversedBy: 'books')]
     #[ORM\JoinTable(name: "author_books")]
     private Collection $authors;

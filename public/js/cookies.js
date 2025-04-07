@@ -9,10 +9,5 @@ document.addEventListener('DOMContentLoaded', function(){
         acceptCookiesButton.addEventListener('click', function(){
          localStorage.setItem('cookiesAccepted', 'true');
          cookieBanner.style.display = 'none';
-     })
- 
-    
- 
-
-  
+     })  
 })

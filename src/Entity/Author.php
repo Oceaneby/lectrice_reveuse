@@ -37,8 +37,7 @@ class Author
     /**
      * @var Collection<int, Book>
      */
-    // #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'author', orphanRemoval: true)]
-    // private Collection $books;
+   
     #[ORM\ManyToMany(targetEntity: Book::class, mappedBy: 'authors', orphanRemoval: true)]
     private Collection $books;
 

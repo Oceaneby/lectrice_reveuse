@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Lectrice Rêveuse est un espace dédié aux passionnés de lecture, où les rêves littéraires prennent vie à travers des critiques, des recommandations et des découvertes de livres inspirants.">
 		<title>
 			{% block title %}Bienvenue sur Lectrice Rêveuse!
 			{% endblock %}
@@ -85,7 +86,7 @@
 		</nav>
 	</header>	
 		<!-- Menu mobile (menu burger) -->
-<div id="mobile-menu" class="md:hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50 hidden">
+<div id="mobile-menu" class=" fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50 hidden">
     <div class="bg-white p-8 rounded-lg shadow-lg w-64 ">
         <button id="menu-close" class="text-black absolute top-4 right-4">
             <i class="fas fa-times"></i>
@@ -158,16 +159,18 @@
 
 		{% block javascripts %}
 			{{ encore_entry_script_tags('app') }}
+			{{ encore_entry_link_tags('app') }}
 			<script>
 				const searchUrl = '{{ path('app_book_search') }}'; 
 			</script>
 			<script src="{{ asset('js/cookies.js') }}" ></script>
-			<script src="{{ asset('js/menu_deroulant.js') }}" defer></script>
-			<script src="{{ asset('js/menu_burger.js') }}" defer></script>
-			<script src="{{ asset('js/search.js') }}" defer></script>
-			<script src="{{ asset('js/review_edit.js') }}" defer></script>
-			<script src="{{ asset('js/review_delete.js') }}" defer></script>
+			<script src="{{ asset('js/menu_deroulant.js') }}" ></script>
+			<script src="{{ asset('js/menu_burger.js') }}" ></script>
+			<script src="{{ asset('js/search.js') }}" ></script>
+			<script src="{{ asset('js/review_edit.js') }}" ></script>
+			<script src="{{ asset('js/review_delete.js') }}" ></script>
 			<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
 		{% endblock %}
 		
 	</body>

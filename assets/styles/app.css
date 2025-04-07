@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 .bn{
     background-color: cornflowerblue;
 }
@@ -10,37 +11,3 @@
     pointer-events: auto !important;
 }
 
-.cloud-border {
-    position: relative;
-    overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.6); /* Couleur de fond noire avec opacité */
-    border-radius: 20px; /* Arrondir les coins de l'élément */
-}
-
-/* Forme nuage à la bordure supérieure */
-.cloud-border::before,
-.cloud-border::after {
-    content: '';
-    position: absolute;
-    background-color: #f0f4f8; /* couleur des nuages */
-    border-radius: 50%;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Forme nuage à la bordure supérieure */
-.cloud-border::before {
-    top: -25px;
-    left: -30px;
-    width: 120%;
-    height: 60px;
-    transform: rotate(-30deg);
-}
-
-/* Forme nuage à la bordure inférieure */
-.cloud-border::after {
-    bottom: -25px;
-    left: -30px;
-    width: 120%;
-    height: 60px;
-    transform: rotate(30deg);
-}
