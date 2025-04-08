@@ -1,0 +1,11 @@
+{
+    "build": {
+      "env": {
+        "APP_ENV": "prod"
+      },
+      "builder": "heroku/buildpacks:20"
+    },
+    "deploy": {
+      "startCommand": "php bin/console cache:clear && symfony serve"
+    }
+  }
