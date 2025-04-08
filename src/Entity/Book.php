@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
@@ -28,16 +29,17 @@ class Book
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $publication_date = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $cover_image = null;
 
-    #[ORM\ManyToOne(inversedBy: 'books')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Author $author = null;
+   
+    #[ORM\ManyToMany(targetEntity: Author::class, inversedBy: 'books')]
+    #[ORM\JoinTable(name: "author_books")]
+    private Collection $authors;
 
-    #[ORM\ManyToOne(inversedBy: 'books')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Genre $genre = null;
+    #[ORM\ManyToMany(targetEntity: Genre::class, inversedBy: 'books')]
+    #[ORM\JoinTable(name: "book_genres")]
+    private Collection $genres;
 
     #[ORM\ManyToOne(inversedBy: 'books')]
     #[ORM\JoinColumn(nullable: false)]
@@ -46,7 +48,7 @@ class Book
     /**
      * @var Collection<int, Library>
      */
-    #[ORM\OneToMany(targetEntity: Library::class, mappedBy: 'book', orphanRemoval: true)]
+    #[ORM\ManyToMany(targetEntity: Library::class, mappedBy: 'books', orphanRemoval: true)]
     private Collection $libraries;
 
     /**
@@ -55,10 +57,25 @@ class Book
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'book', orphanRemoval: true)]
     private Collection $reviews;
 
+    /**
+     * @var Collection<int, Review>
+     */
+    #[ORM\ManyToMany(targetEntity: Bookshelf::class, mappedBy:'book')]
+    private Collection $bookshelves;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $amazonUrl= null;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $fnacUrl = null;
+
     public function __construct()
     {
         $this->libraries = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->bookshelves = new ArrayCollection();
+        $this->genres = new ArrayCollection();
+        $this->authors = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -119,33 +136,66 @@ class Book
         return $this->cover_image;
     }
 
-    public function setCoverImage(?string $cover_image): static
+    public function setCoverImage($cover_image): self
     {
-        $this->cover_image = $cover_image;
+        if ($cover_image instanceof UploadedFile) {
+            // Si c'est un objet UploadedFile, on le déplace et on conserve son nom dans la base de données
+            $this->cover_image = $cover_image->getClientOriginalName();
+        } else {
+            // Sinon, c'est probablement déjà une chaîne de caractères (nom du fichier)
+            $this->cover_image = (string) $cover_image;
+        }
 
         return $this;
     }
 
-    public function getAuthor(): ?Author
+    public function getAuthors(): Collection
     {
-        return $this->author;
+        return $this->authors;
     }
-
-    public function setAuthor(?Author $author): static
+    public function addAuthor(Author $author): static
     {
-        $this->author = $author;
+        if (!$this->authors->contains($author)) {
+            $this->authors[] = $author;
+        }
 
         return $this;
     }
 
-    public function getGenre(): ?Genre
+    public function removeAuthor(Author $author): static
     {
-        return $this->genre;
+        if ($this->authors->removeElement($author)) {
+         
+            $author->removeBook($this);  
+        }
+
+        return $this;
     }
 
-    public function setGenre(?Genre $genre): static
+    // public function setAuthor(?Author $author): static
+    // {
+    //     $this->author = $author;
+
+    //     return $this;
+    // }
+
+    public function getGenres(): Collection
     {
-        $this->genre = $genre;
+        return $this->genres;
+    }
+
+    public function addGenre(Genre $genre): self
+    {
+        if (!$this->genres->contains($genre)) {
+            $this->genres[] = $genre;
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): self
+    {
+        $this->genres->removeElement($genre);
 
         return $this;
     }
@@ -173,8 +223,8 @@ class Book
     public function addLibrary(Library $library): static
     {
         if (!$this->libraries->contains($library)) {
-            $this->libraries->add($library);
-            $library->setBook($this);
+            $this->libraries[] = $library;
+           
         }
 
         return $this;
@@ -184,9 +234,7 @@ class Book
     {
         if ($this->libraries->removeElement($library)) {
             // set the owning side to null (unless already changed)
-            if ($library->getBook() === $this) {
-                $library->setBook(null);
-            }
+           
         }
 
         return $this;
@@ -219,6 +267,54 @@ class Book
             }
         }
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bookshelf>
+     */
+    public function getBookshelves(): Collection
+    {
+        return $this->bookshelves;
+    }
+
+    public function addBookshelf(Bookshelf $bookshelf): static
+    {
+        if (!$this->bookshelves->contains($bookshelf)) {
+            $this->bookshelves->add($bookshelf);
+            $bookshelf->addBook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBookshelf(Bookshelf $bookshelf): static
+    {
+        if ($this->bookshelves->removeElement($bookshelf)) {
+            $bookshelf->removeBook($this);
+        }
+
+        return $this;
+    }
+    public function getAmazonUrl(): ?string
+    {
+        return $this->amazonUrl;
+    }
+
+    public function setAmazonUrl(?string $amazonUrl): self
+    {
+        $this->amazonUrl = $amazonUrl;
+        return $this;
+    }
+
+    public function getFnacUrl(): ?string
+    {
+        return $this->fnacUrl;
+    }
+
+    public function setFnacUrl(?string $fnacUrl): self
+    {
+        $this->fnacUrl = $fnacUrl;
         return $this;
     }
 }

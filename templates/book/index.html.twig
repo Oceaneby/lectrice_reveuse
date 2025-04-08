@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Book index{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-semibold text-gray-900 mb-6">Book Index</h1>
+
+        <div class="overflow-x-auto bg-white shadow rounded-lg">
+            <table class="min-w-full table-auto">
+                <thead>
+                    <tr class="bg-gray-100 border-b">
+                        <th class="py-3 px-6 text-left text-gray-600">Id</th>
+                        <th class="py-3 px-6 text-left text-gray-600">Title</th>
+                        <th class="py-3 px-6 text-left text-gray-600">Description</th>
+                        <th class="py-3 px-6 text-left text-gray-600">Isbn</th>
+                        <th class="py-3 px-6 text-left text-gray-600">Publication Date</th>
+                        <th class="py-3 px-6 text-left text-gray-600">Cover Image</th>
+                        <th class="py-3 px-6 text-left text-gray-600">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3 px-6 text-gray-700">{{ book.id }}</td>
+                            <td class="py-3 px-6 text-gray-700">{{ book.title }}</td>
+                            <td class="py-3 px-6 text-gray-700">{{ book.description }}</td>
+                            <td class="py-3 px-6 text-gray-700">{{ book.isbn }}</td>
+                            <td class="py-3 px-6 text-gray-700">{{ book.publicationDate ? book.publicationDate|date('Y-m-d H:i:s') : '' }}</td>
+                            <td class="py-3 px-6">
+                                <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="{{ book.title }}" class="w-20 h-20 object-cover rounded-lg">
+                            </td>
+                            <td class="py-3 px-6">
+                                <div class="space-x-4">
+                                    <a href="{{ path('app_book_show', {'id': book.id}) }}" class="text-blue-600 hover:text-blue-800">Show</a>
+                                    <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="text-yellow-600 hover:text-yellow-800">Edit</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-3 px-6 text-gray-500">No records found</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6">
+            <a href="{{ path('app_book_new') }}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Create New Book</a>
+        </div>
+    </div>
+{% endblock %}

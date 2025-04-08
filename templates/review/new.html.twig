@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 id="add-comment-title">Ajouter un commentaire pour "{{ book.title }}"</h1>
+
+    {% for flash_message in app.flashes('success') %}
+        <div class="alert alert-success" role="alert">{{ flash_message }}</div>
+    {% endfor %}
+    {% for flash_message in app.flashes('error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_message }}</div>
+    {% endfor %}
+
+    {{ form_start(form, {'attr': {'aria-labelledby': 'add-comment-title'}}) }}
+        <section aria-labelledby="review-form">
+            <h2 class="sr-only" id="review-form">Formulaire d'ajout de commentaire</h2>
+
+            <div class="form-group">
+                {{ form_label(form.review_text, null, {'attr': {'for': form.review_text.vars.id, 'class': 'form-label'}}) }}
+                {{ form_widget(form.review_text, {'attr': {'class': 'form-control', 'rows': 4, 'aria-describedby': 'review-text-help'}}) }}
+                <small id="review-text-help" class="form-text text-muted">Votre commentaire sur le livre.</small>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.rating, null, {'attr': {'for': form.rating.vars.id, 'class': 'form-label'}}) }}
+                {{ form_widget(form.rating, {'attr': {'class': 'form-control', 'aria-describedby': 'rating-help'}}) }}
+                <small id="rating-help" class="form-text text-muted">Sélectionnez une note pour le livre.</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary" aria-label="Publier mon commentaire">Publier mon commentaire</button>
+        </section>
+    {{ form_end(form) }}
+
+    <br/>
+    <a href="{{ path('app_book_reviews', {id: book.id}) }}" class="btn btn-link" aria-label="Retour à la liste des commentaires">Retour à la liste des commentaires</a>
+{% endblock %}

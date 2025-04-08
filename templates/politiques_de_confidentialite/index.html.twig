@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de confidentialité{% endblock %}
+
+{% block body %}
+
+    <div class="flex flex-col items-center p-8 bg-gray-100 text-gray-900">
+        <h1 class="text-5xl font-extrabold mb-10 text-center text-gray-800">Politique de confidentialité</h1>
+
+        <section class="max-w-3xl bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-3xl font-semibold mb-4 text-blue-600">Introduction</h2>
+            <p class="text-lg text-gray-700 leading-relaxed">
+                Avec l’évolution des nouvelles technologies de communication, il est crucial de veiller à la protection de la vie privée. Nous nous engageons à préserver la confidentialité des renseignements personnels que nous collectons.
+            </p>
+        </section>
+
+        <section class="max-w-3xl bg-white p-6 mt-6 rounded-lg shadow-lg">
+            <h2 class="text-3xl font-semibold mb-4 text-blue-600">Collecte des renseignements personnels</h2>
+            <ul class="list-none space-y-2 text-lg text-gray-700">
+                <li class="flex items-center"><span class="text-blue-500">✔️</span> Prénom</li>
+                <li class="flex items-center"><span class="text-blue-500">✔️</span> Adresse électronique</li>
+            </ul>
+            <p class="mt-4 text-gray-700 leading-relaxed">
+                Les informations sont collectées via des formulaires et grâce à votre interaction avec notre site Web.
+            </p>
+        </section>
+
+        <section class="max-w-3xl bg-white p-6 mt-6 rounded-lg shadow-lg">
+            <h2 class="text-3xl font-semibold mb-4 text-blue-600">Droits des utilisateurs</h2>
+            <p class="text-lg text-gray-700 leading-relaxed">
+                Vous avez le **droit d’opposition** et de **retrait** de vos renseignements personnels. Vous pouvez également demander **l'accès et la rectification** de vos données.
+            </p>
+            <p class="mt-4 font-medium text-gray-800">Code postal : 85</p>
+        </section>
+
+        <section class="max-w-3xl bg-white p-6 mt-6 rounded-lg shadow-lg">
+            <h2 class="text-3xl font-semibold mb-4 text-blue-600">Sécurité des données</h2>
+            <p class="text-lg text-gray-700 leading-relaxed">
+                Nous mettons en place des mesures de sécurité strictes pour protéger vos informations :
+            </p>
+            <ul class="list-disc list-inside mt-4 space-y-2 text-lg text-gray-700">
+                <li>Protocole SSL</li>
+                <li>Accès restreint aux données</li>
+                <li>Authentification par identifiant / mot de passe</li>
+            </ul>
+        </section>
+
+        <section class="max-w-3xl bg-white p-6 mt-6 rounded-lg shadow-lg">
+            <h2 class="text-3xl font-semibold mb-4 text-blue-600">Respect des lois</h2>
+            <p class="text-lg text-gray-700 leading-relaxed">
+                Nous respectons les législations en vigueur, notamment le **Règlement Général sur la Protection des Données (RGPD)** et la **loi Informatique et Libertés**.
+            </p>
+        </section>
+    </div>
+
+
+
+{% endblock %}

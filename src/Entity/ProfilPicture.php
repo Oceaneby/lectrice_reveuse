@@ -14,7 +14,8 @@ class ProfilPicture
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'profilPictures')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'profilPictures')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     #[ORM\Column(length: 255)]

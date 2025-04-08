@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Author index
+{% endblock %}
+
+{% block body %}
+	<h1>Author index</h1>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>First_name</th>
+				<th>Last_name</th>
+				<th>Biography</th>
+				<th>Author_picture</th>
+				<th>Birth_date</th>
+				<th>Nationality</th>
+				<th>actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for author in authors %}
+				<tr>
+					<td>{{ author.id }}</td>
+					<td>{{ author.firstName }}</td>
+					<td>{{ author.lastName }}</td>
+					<td>{{ author.biography }}</td>
+					<td>
+						{% if author.authorPicture %}
+							<img src="{{ asset('uploads/authors_pictures/' ~ author.authorPicture) }}" alt="Photo de l'auteur" class="w-32 h-32 rounded-full object-cover ">
+						{% else %}
+							<p>Aucune photo disponible</p>
+						{% endif %}
+					</td>
+					<td>{{ author.birthDate ? author.birthDate|date('Y-m-d') : '' }}</td>
+					<td>{{ author.nationality }}</td>
+					<td>
+						<a href="{{ path('app_author_show', {'id': author.id}) }}">show</a>
+						<a href="{{ path('app_author_edit', {'id': author.id}) }}">edit</a>
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="8">no records found</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<a href="{{ path('app_author_new') }}">Create new</a>
+{% endblock %}

@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+
+.bn{
+    background-color: cornflowerblue;
+}
+
+.group:hover ul {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+

@@ -8,6 +8,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -18,6 +19,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[UniqueEntity(fields: ['email'], message: "Email indisponible.")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    
+    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -27,7 +30,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $first_name = null;
+    #[Assert\NotBlank(message: "Le prénom ne peut pas être vide.")] 
+    #[Assert\Length(min: 2, minMessage: "Le prénom doit comporter au moins {{ limit }} caractères.")] 
+    private ?string $first_name = '';
 
     #[ORM\Column(length: 255)]
     private ?string $last_name = null;
@@ -42,6 +47,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $registration_date = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\LessThan("today", message:'La date de naissance doit être dans le passé.')]
+    #[Assert\GreaterThan("1900-01-01", message: "La date de naissance doit être après le 1er janvier 1900.")]
     private ?\DateTimeInterface $birth_date = null;
 
     #[ORM\Column]
@@ -54,9 +61,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $bookshelves;
 
     /**
-     * @var Collection<int, ProfilPicture>
+     *  ProfilPicture>
      */
-    #[ORM\OneToMany(targetEntity: ProfilPicture::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: ProfilPicture::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
     private Collection $profilPictures;
 
     /**
@@ -74,10 +81,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->bookshelves = new ArrayCollection();
-        $this->profilPictures = new ArrayCollection();
         $this->libraries = new ArrayCollection();
         $this->reviews = new ArrayCollection();
-       
+        $this->profilPictures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -225,10 +231,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, ProfilPicture>
-     */
-    public function getProfilPictures(): Collection
+
+    public function getProfilPicture(): Collection
     {
         return $this->profilPictures;
     }
@@ -246,7 +250,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeProfilPicture(ProfilPicture $profilPicture): static
     {
         if ($this->profilPictures->removeElement($profilPicture)) {
-            // set the owning side to null (unless already changed)
             if ($profilPicture->getUser() === $this) {
                 $profilPicture->setUser(null);
             }
@@ -313,5 +316,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+    public function __toString(): string
+    {
+        return $this->first_name . ' ' . $this->last_name;
     }
 }

@@ -1,26 +1,177 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Lectrice Rêveuse est un espace dédié aux passionnés de lecture, où les rêves littéraires prennent vie à travers des critiques, des recommandations et des découvertes de livres inspirants.">
 		<title>
-			{% block title %}Welcome!
+			{% block title %}Bienvenue sur Lectrice Rêveuse!
 			{% endblock %}
 		</title>
 		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-		
+
 		{% block stylesheets %}
 			{{ encore_entry_link_tags('app') }}
+			<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+			<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+			<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+			<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 		{% endblock %}
+	</head>
+	<body class="flex flex-col min-h-screen">
+	 <header>
+		<!-- Navbar -->
+		<nav class="bg-gray-900 text-white shadow-md py-4" role="navigation" aria-label="Menu principal">
+			<div class="container mx-auto px-6 flex items-center justify-between">
+				<a href="{{ path('app_home') }}" aria-label="Retour à la page d'accueil">
+					<img src="{{ asset('/images/LR.png') }}" alt="Logo LR Lectrice Rêveuse" class="max-h-12 object-contain">
+				</a>
+				<button id="menu-toggle" class="md:hidden text-white">
+    				<i class="fas fa-bars"></i> 
+				</button>
+				<!-- Menu -->
+				<div class="hidden md:flex space-x-8" role="menu">
+					<a href="#activity" class="hover:text-pink-400 transition" role="menuitem" aria-label="Qui sommes-nous ?">Qui sommes-nous ?</a>
+					<!-- Menu déroulant Univers -->
+					<div class="relative" id="universe-dropdown" role="menuitem">
+						<a href="#" class="hover:text-pink-400 transition" id="universe-trigger" aria-haspopup="true" aria-expanded="false" aria-label="Menu des genres littéraires">Univers</a>
+						<ul class="z-[9999] absolute left-0 top-full bg-gray-800 text-white shadow-lg rounded-md mt-2 w-48 hidden transition-opacity duration-300" id="universe-menu" role="menu">
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Aventure' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Aventure">Aventure</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Fiction' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Fiction">Fiction</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Thriller' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Thriller">Thriller</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Thriller psychologique' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Thriller psychologique">Thriller psychologique</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Mystère' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Mystère">Mystère</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Suspense' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Suspense">Suspense</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Dark Romance' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Dark Romance">Dark Romance</a></li>
+							<li><a href="#" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Young Adult">Young Adult</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'New Romance' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre New Romance">New Romance</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Fantasy' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Fantasy">Fantasy</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Littérature classique' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Littérature classique">Littérature classique</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Manga' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Manga">Manga</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Horreur' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Horreur">Horreur</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Fantastique' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Fantastique">Fantastique</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Science-Fiction' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Science-Fiction">Science-Fiction</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': "Roman d\'amour" }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Roman d'amour">Roman d'amour</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Romance contemporaine' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Romance contemporaine">Romance contemporaine</a></li>
+							<li><a href="{{ path('app_books_by_genre', { 'genre': 'Littérature jeunesse' }) }}" class="block px-4 py-2 hover:bg-pink-600 transition" role="menuitem" aria-label="Genre Littérature jeunesse">Littérature jeunesse</a></li>
+						</ul>
+					</div>
+					<a href="#forum" class="hover:text-pink-400 transition" role="menuitem" aria-label="Accéder au forum">Forum</a>
+					{% if app.user %}
+						<a href="{{ path('app_library') }}" class="hover:text-pink-400 transition" role="menuitem" aria-label="Accéder à ma bibliothèque">Ma bibliothèque</a>
+					{% endif %}
+					<a href="{{ path('app_contact') }}" class="hover:text-pink-400 transition" role="menuitem" aria-label="Contactez-nous">Contact</a>
+					{% if is_granted('ROLE_ADMIN') %}
+						<a href="{{ path('admin') }}" class="hover:text-pink-400 transition" role="menuitem" aria-label="Accéder à l'administration">Admin</a>
+					{% endif %}
+				</div>
+				<!-- Recherche -->
+				<div class="relative hidden md:block" aria-labelledby="search-form">
+					<form id="search-form" action="{{ path('app_book_index') }}" method="get" class="flex" onsubmit="event.preventDefault(); searchBooks();">
+						<input type="text" id="search-input" name="query" placeholder="Recherche..." class="bg-gray-800 text-white px-4 py-2 rounded-l-lg focus:outline-none" oninput="searchBooks(event)" aria-label="Rechercher des livres">
+						<button id="search-button" type="submit" class="bg-pink-700 text-white px-4 py-2 rounded-r-lg hover:bg-pink-800" aria-label="Lancer la recherche">Rechercher</button>
+					</form>
+					<div id="search-results" class="absolute top-0 left-0 w-full mt-10 bg-gray-800 text-white shadow-lg rounded-md z-10 hidden cursor-pointer" role="listbox" aria-label="Résultats de recherche"></div>
+				</div>
+				<div class="hidden md:flex items-center space-x-4">
+					{% if app.user %}
+						<a href="{{ path('app_logout') }}" class="bg-transparent border-2 border-pink-500 hover:bg-pink-500 hover:text-white text-pink-500 py-2 px-4 rounded-lg transition" aria-label="Se déconnecter">Se déconnecter</a>
+					{% else %}
+						<a href="{{ path('app_register') }}" class="bg-pink-700 hover:bg-pink-800 text-white py-2 px-4 rounded-lg transition" aria-label="S'inscrire">S'inscrire</a>
+						<a href="{{ path('app_login') }}" class="bg-transparent border-2 border-pink-500 hover:bg-pink-700 hover:text-white text-pink-500 py-2 px-4 rounded-lg transition" aria-label="Se connecter">Se connecter</a>
+					{% endif %}
+					<a href="{{ path('app_profile_index') }}" class="bg-transparent border-2 border-pink-500 hover:bg-pink-700 hover:text-white text-pink-500 py-2 px-4 rounded-lg transition" aria-label="Accéder à mon compte">Mon compte</a>
+				</div>
+			</div>
+		</nav>
+	</header>	
+		<!-- Menu mobile (menu burger) -->
+<div id="mobile-menu" class=" fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50 hidden">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-64 ">
+        <button id="menu-close" class="text-black absolute top-4 right-4">
+            <i class="fas fa-times"></i>
+        </button>
+        <ul>
+            <li><a href="#activity" class="block px-4 py-2">Qui sommes-nous ?</a></li>
+            <li><a href="#forum" class="block px-4 py-2">Forum</a></li>
+            {% if app.user %}
+                <li><a href="{{ path('app_library') }}" class="block px-4 py-2">Ma bibliothèque</a></li>
+            {% endif %}
+            <li><a href="{{ path('app_contact') }}" class="block px-4 py-2">Contact</a></li>
+            {% if is_granted('ROLE_ADMIN') %}
+                <li><a href="{{ path('admin') }}" class="block px-4 py-2">Admin</a></li>
+            {% endif %}
+            
+            <!-- Menu déroulant Univers -->
+            <li>
+                <a href="#" class="block px-4 py-2" id="universe-toggle">Univers</a>
+                <ul id="universe-submenu" class="hidden pl-4">
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Aventure' }) }}" class="block px-4 py-2">Aventure</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Fiction' }) }}" class="block px-4 py-2">Fiction</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Thriller' }) }}" class="block px-4 py-2">Thriller</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Thriller psychologique' }) }}" class="block px-4 py-2">Thriller psychologique</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Mystère' }) }}" class="block px-4 py-2">Mystère</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Suspense' }) }}" class="block px-4 py-2">Suspense</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Dark Romance' }) }}" class="block px-4 py-2">Dark Romance</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Young Adult' }) }}" class="block px-4 py-2">Young Adult</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'New Romance' }) }}" class="block px-4 py-2">New Romance</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Fantasy' }) }}" class="block px-4 py-2">Fantasy</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Littérature classique' }) }}" class="block px-4 py-2">Littérature classique</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Manga' }) }}" class="block px-4 py-2">Manga</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Horreur' }) }}" class="block px-4 py-2">Horreur</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Fantastique' }) }}" class="block px-4 py-2">Fantastique</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Science-Fiction' }) }}" class="block px-4 py-2">Science-Fiction</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': "Roman d\'amour" }) }}" class="block px-4 py-2">Roman d'amour</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Romance contemporaine' }) }}" class="block px-4 py-2">Romance contemporaine</a></li>
+                    <li><a href="{{ path('app_books_by_genre', { 'genre': 'Littérature jeunesse' }) }}" class="block px-4 py-2">Littérature jeunesse</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+		<main class="flex-grow">
+			{% block body %}
+			{% endblock %}
+		</main>
+		<!-- Footer -->
+		<footer class="bg-gray-900 text-white py-8 mt-auto" aria-labelledby="footer">
+			<div class="container mx-auto px-6">
+				<div class="flex justify-center items-center">
+					<section class="flex items-center space-x-4 mr-8">
+						<img src="{{ asset('/images/LR.png') }}" alt="Logo LR Lectrice Rêveuse" class="h-10">
+					</section>
+					<section class="flex space-x-8">
+						<p class="hover:text-indigo-400 text-xs" aria-label="Copyright tous droits réserver">&copy; 2025 Lectrice Rêveuse. Tous droits réservés.</p>
+						<a href="{{ path('app_home') }}" class="hover:text-indigo-400 text-xs" aria-label="Retour à la page d'accueil">Accueil</a>
+						<a href="{{ path('app_contact') }}" class="hover:text-indigo-400 text-xs" aria-label="Contactez-nous">Contact</a>
+						<a href="{{ path('app_mentions_legales') }}" class="hover:text-indigo-400 text-xs" aria-label="Mentions légales">Mentions légales</a>
+						<a href="{{ path('app_politiques_de_confidentialite') }}" class="hover:text-indigo-400 text-xs" aria-label="Mentions légales">Politique de confidentialité</a>
+					</section>
+				</div>
+			</div>
+		</footer>
+		<div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-gray-900 text-white py-4 text-center z-50 hidden">
+    		<p class="mb-2">Ce site utilise des cookies pour améliorer votre expérience. En cliquant sur "Accepter et fermer", vous acceptez notre politique de cookies.</p>
+    		<button id="accept-cookies" class="bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded-lg">
+        		Accepter et fermer
+    		</button>
+		</div>
 
 		{% block javascripts %}
 			{{ encore_entry_script_tags('app') }}
-			
+			{{ encore_entry_link_tags('app') }}
+			<script>
+				const searchUrl = '{{ path('app_book_search') }}'; 
+			</script>
+			<script src="{{ asset('js/cookies.js') }}" ></script>
+			<script src="{{ asset('js/menu_deroulant.js') }}" ></script>
+			<script src="{{ asset('js/menu_burger.js') }}" ></script>
+			<script src="{{ asset('js/search.js') }}" ></script>
+			<script src="{{ asset('js/review_edit.js') }}" ></script>
+			<script src="{{ asset('js/review_delete.js') }}" ></script>
+			<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
 		{% endblock %}
-	</head>
-	<body>
-	 <h1 class="text-3xl font-bold underline text-red-800">
-      Hello world!
-    </h1>
-		{% block body %}{% endblock %}
+		
 	</body>
 </html>

@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\BookshelfRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: BookshelfRepository::class)]
 class Bookshelf
@@ -24,6 +26,19 @@ class Bookshelf
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\ManyToOne(targetEntity: Library::class, inversedBy: 'bookshelves')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Library $library = null;
+
+    #[ORM\ManyToMany(targetEntity: Book::class, inversedBy: 'bookshelves')]
+    #[ORM\JoinTable(name: "book_bookshelf")]
+    private Collection $book;
+
+    public function __construct()
+    {
+        $this->book = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -37,6 +52,18 @@ class Bookshelf
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getLibrary(): ?Library
+    {
+        return $this->library;
+    }
+
+    public function setLibrary(?Library $library): static
+    {
+        $this->library = $library;
 
         return $this;
     }
@@ -61,6 +88,30 @@ class Bookshelf
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getBooks(): Collection
+    {
+        return $this->book;
+    }
+
+    public function addBook(Book $book): static
+    {
+        if (!$this->book->contains($book)) {
+            $this->book->add($book);
+            $book->addBookshelf($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBook(Book $book): static
+    {
+        if ($this->book->removeElement($book)) {
+            $book->removeBookshelf($this);
+        }
 
         return $this;
     }

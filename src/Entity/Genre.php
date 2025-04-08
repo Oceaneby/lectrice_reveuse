@@ -25,7 +25,7 @@ class Genre
     /**
      * @var Collection<int, Book>
      */
-    #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'genre', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'genres', orphanRemoval: true)]
     private Collection $books;
 
     public function __construct()
@@ -70,25 +70,4 @@ class Genre
         return $this->books;
     }
 
-    public function addBook(Book $book): static
-    {
-        if (!$this->books->contains($book)) {
-            $this->books->add($book);
-            $book->setGenre($this);
-        }
-
-        return $this;
-    }
-
-    public function removeBook(Book $book): static
-    {
-        if ($this->books->removeElement($book)) {
-            // set the owning side to null (unless already changed)
-            if ($book->getGenre() === $this) {
-                $book->setGenre(null);
-            }
-        }
-
-        return $this;
-    }
 }

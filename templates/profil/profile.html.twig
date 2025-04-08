@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <section aria-labelledby="profile-title">
+        <h1 class="text-3xl font-semibold mb-6 text-center" id="profile-title">Mon profil</h1>
+    </section>
+    <!-- Photo de profil et informations personnelles -->
+    <section aria-labelledby="profile-info">
+        <h2 class="sr-only" id="profile-info">Informations personnelles</h2>
+        <div class="flex flex-col items-center justify-center mb-6">
+            {% if app.user.profilPicture | length > 0 %}
+                <img src="{{ asset('uploads/profil_pictures/' ~ app.user.profilPicture.first.getImageUrl) }}" alt="Photo de profil" class="w-32 h-32 rounded-full object-cover mb-4">
+            {% else %}
+                <div class="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center text-white text-xl font-semibold mb-4">
+                    <span>Aucune</span>
+                </div>
+            {% endif %}
+            <p class="text-2xl font-medium mb-4">Mes informations personnelles</p>
+            <p class="text-lg text-gray-700">{{ app.user.username }}</p>
+        </div>
+    </section>
+    <section aria-labelledby="profile-edit-section">
+        <div class="text-center mt-6">
+            <a href="{{ path('profile_edit') }}" class="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out" aria-label="Modifier mon profil">
+                Modifier le profil
+            </a>
+        </div>
+    </section>
+    <!-- Section des étagères de livres -->
+    <section aria-labelledby="bookshelves-section">
+        <h2 class="text-2xl font-semibold mb-4 text-center" id="bookshelves-section">Mes étagères de livres</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+            {% for bookshelf in app.user.bookshelves %}
+            <article class="relative rounded-lg shadow-xl overflow-hidden group transform transition-all hover:scale-105 hover:shadow-2xl duration-300 p-4"
+                style="background-image: url('{{ asset('images/bookshelves.png') }}'); background-size: cover; background-position: center; min-height: 500px;">
+                <h3 class="text-xl font-semibold text-center mb-4">{{ bookshelf.shelfName }}</h3>
+                <!-- Si aucun livre n'est dans l'étagère, afficher un message -->
+                {% if bookshelf.books is empty %}
+                    <p class="text-gray-600 text-center">Aucun livre dans cette étagère pour le moment.</p>
+                {% else %}
+                    <div class="flex flex-wrap justify-start space-x-3 max-h-[500px] overflow-y-auto">
+                        {% for book in paginatedBooksByShelf[bookshelf.id] %}
+                        <div class="relative top-1 mb-4">
+                            <div class="rounded-lg p-2 transform transition-all hover:scale-105">
+                                <img src="{{ asset('uploads/book_cover/' ~ book.coverImage) }}" alt="{{ book.title }}" class="w-24 h-32 object-cover rounded-lg ">
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <!-- Pagination pour les livres  -->
+                {% if paginatedBooksByShelf[bookshelf.id].getTotalItemCount() > 0 %}
+                    <section aria-labelledby="pagination-section-{{ bookshelf.id }}">
+                        <h4 class="sr-only" id="pagination-section-{{ bookshelf.id }}">Pagination des livres de l'étagère {{ bookshelf.shelfName }}</h4>
+                        <div class="mt-8 text-center">
+                            <div class="flex justify-center space-x-2 mt-8">
+                                <ul class="flex items-center space-x-2">
+                                    {% for page in 1..paginatedBooksByShelf[bookshelf.id].getPageCount() %}
+                                    <li>
+                                        <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'page': page})) }}"
+                                           class="px-4 py-2 text-sm rounded-md bg-gray-200 hover:bg-gray-300 transition-colors duration-200 {% if page == paginatedBooksByShelf[bookshelf.id].getCurrentPageNumber() %}bg-pink-700 text-white{% endif %}"
+                                           aria-label="Page {{ page }}">{{ page }}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                {% endif %}
+            </article>
+            {% else %}
+                <p class="text-gray-600">Aucune étagère pour le moment.</p>
+            {% endfor %}
+        </div>
+    </section>
+    <!-- Section des 5 derniers commentaires -->
+    <section aria-labelledby="reviews-section">
+        <h2 class="text-2xl font-semibold mb-4 text-center" id="reviews-section">Mes 5 derniers commentaires</h2>
+        <a href="{{ path('profile_edit_reviews') }}" class="inline-block px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200 ease-in-out" aria-label="Modifier mes commentaires">
+            Modifier mes commentaires
+        </a>
+        {% if app.user.reviews is not empty %}
+        <div class="space-y-6 mt-6">
+            {% for review in app.user.reviews|sort((a, b) => b.getReviewDate() <=> a.getReviewDate())|slice(0, 5) %}
+            <article class="bg-gray-50 p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                <div class="flex items-center space-x-4">
+                    <img src="{{ asset('uploads/book_cover/' ~ review.book.coverImage) }}" alt="{{ review.book.title }}" class="w-16 h-24 object-cover rounded-lg">
+                    <div>
+                        <p class="font-semibold text-gray-800">{{ review.book.title }}</p>
+                        <p class="text-sm text-gray-600">{{ review.reviewText|slice(0, 100) }}...</p>
+                        <p class="text-sm text-gray-500 mt-2">{{ review.getReviewDate()|date('d/m/Y H:i') }}</p>
+                        <!-- Affichage des étoiles pour la note -->
+                        <div class="flex items-center mt-2">
+                            {% for i in 1..5 %}
+                                <i class="fa{{ i <= review.rating ? 's' : 'r' }} fa-star text-yellow-500"></i>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-600 text-center">Vous n'avez pas encore écrit de commentaires.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

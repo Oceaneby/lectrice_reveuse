@@ -1,49 +1,73 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Inscription{% endblock %}
 
 {% block body %}
     <div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-lg">
-            <h1 class="text-3xl font-extrabold text-center text-gray-900">Create your account</h1>
+            <h1 class="text-3xl font-extrabold text-center text-gray-900">Créer votre compte</h1>
 
             <form class="mt-8 space-y-6" action="#" method="POST">
                 {{ form_start(registrationForm) }}
                     <div class="space-y-4 ">
                         {{ form_row(registrationForm.username, {
-                            'attr': {'class': 'appearance-none rounded-md block w-full px-3 py-2 border-1 border-gray-600 placeholder-gray-500 text-gray-900 sm:text-sm'}
+                            'attr': {'class': 'appearance-none rounded-md block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}
                         }) }}
+                         <div class="text-red-600">
+                            {{ form_errors(registrationForm.username) }}
+                        </div>
                     </div>    
                     {{ form_row(registrationForm.first_name, {
                         'attr': {
                                 'class': 'appearance-none rounded-md block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                             }
                     }) }}
+                    <div class="text-red-600">
+                            {{ form_errors(registrationForm.first_name) }}
+                        </div>
                     {{ form_row(registrationForm.last_name, {
                         'attr': {
                                 'class': 'appearance-none rounded-md block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                             }
                     }) }}
+                       <div class="text-red-600">
+                            {{ form_errors(registrationForm.last_name) }}
+                        </div>
                     {{ form_row(registrationForm.email, {
                         'attr': {
                                 'class': 'appearance-none rounded-md block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                             }
                     }) }}
+                        <div class="text-red-600">
+                            {{ form_errors(registrationForm.email) }}
+                        </div>
+
                     {{ form_row(registrationForm.birth_date, {
                         'attr': {
                                 'class': 'appearance-none rounded-md block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                             }
                     }) }}
+                    <div class="text-red-600">
+                            {{ form_errors(registrationForm.birth_date) }}
+                        </div>
+
                     {{ form_row(registrationForm.plainPassword, {
                         'attr': {
                                 'class': 'appearance-none rounded-md block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                             }
                     }) }}
+                    <div class="text-red-600">
+                            {{ form_errors(registrationForm.plainPassword) }}
+                        </div>
+
                     {{ form_row(registrationForm.agreeTerms, {
                         'attr': {
                                 'class': 'rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500'
                             }
                     }) }}
+                    <div class="text-red-600">
+                            {{ form_errors(registrationForm.agreeTerms) }}
+                        </div>
                     {{ form_row(registrationForm.submit, {
                         'attr': {
                                 'class': 'appearance-none rounded-md block w-full px-3 py-2 border border-gray-600 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'

@@ -13,6 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 
+
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
@@ -24,23 +25,39 @@ class RegistrationController extends AbstractController
 
         dump($form->getData());
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
-            $plainPassword = $form->get('plainPassword')->getData();
+        if ($form->isSubmitted()) {
+            // dd("ta maman quoi");
 
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            // dd($form->getErrors(true, false));
+if($form->isValid()) {
 
-            $user->setRoles(['ROLE_USER']); 
+   $plainPassword = $form->get('plainPassword')->getData();
 
-            $user->setRegistrationDate(new \DateTime()); 
+   // encode the plain password
+   $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
-            $entityManager->persist($user);
-            $entityManager->flush();
-            $this->addFlash('success', 'Votre inscription est réussie!');
-            // do anything else you need here, like send an email
-            return $security->login($user, 'form_login', 'main');
-            return $this->redirectToRoute('app_home');
+   $user->setRoles(['ROLE_USER']); 
+
+   $user->setRegistrationDate(new \DateTime()); 
+
+   $birthDate = $user->getBirthDate();
+   if ($birthDate) {
+       // Assurer que la date est bien dans un format compatible (si nécessaire)
+       $formattedBirthDate = $birthDate->format('Y-m-d'); 
+       $user->setBirthDate(new \DateTime($formattedBirthDate));  // Ici, la date est de nouveau transformée en objet DateTime si nécessaire
+   }
+   dump($form->getErrors(true));
+
+   $entityManager->persist($user);
+   $entityManager->flush();
+   $this->addFlash('success', 'Votre inscription est réussie!');
+   // do anything else you need here, like send an email
+   $security->login($user, 'form_login', 'main');
+   return $this->redirectToRoute('app_home');
+}
+         
+          } else {
+            dump($form->getErrors(true));
         }
 
         return $this->render('registration/register.html.twig', [

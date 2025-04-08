@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\LibraryRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: LibraryRepository::class)]
 class Library
@@ -18,9 +20,12 @@ class Library
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'libraries')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Book $book = null;
+    /**
+     * @var Collection<int, Book>
+     */
+    #[ORM\ManyToMany(targetEntity: Book::class, inversedBy: 'libraries', fetch: 'EAGER')]
+    #[ORM\JoinTable(name: 'library_books')]
+    private Collection $books;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $added_date = null;
@@ -33,6 +38,23 @@ class Library
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $end_date = null;
+
+    /**
+     * @var Collection<int, >
+     */
+    #[ORM\OneToMany(targetEntity: Bookshelf::class, mappedBy: 'library', cascade: ["persist", "remove"])]
+    private Collection $bookshelves;
+
+    public function __construct()
+    {
+        $this->books = new ArrayCollection();
+        $this->bookshelves = new ArrayCollection(); // Initialiser la collection de livres
+    }
+
+    public function getBookshelves(): Collection
+    {
+        return $this->bookshelves;
+    }
 
     public function getId(): ?int
     {
@@ -51,14 +73,35 @@ class Library
         return $this;
     }
 
-    public function getBook(): ?Book
+    public function getBooks(): Collection
     {
-        return $this->book;
+        return $this->books;
     }
 
-    public function setBook(?Book $book): static
+    // Ajouter un livre à la bibliothèque
+    public function addBook(Book $book): static
     {
-        $this->book = $book;
+        if (!$this->books->contains($book)) {
+            $this->books[] = $book;
+            $book->addLibrary($this);
+        }
+
+        return $this;
+    }
+
+    // Supprimer un livre de la bibliothèque
+    public function removeBook(Book $book): static
+    {
+        if ($this->books->contains($book)) {
+            $this->books->removeElement($book); // Retirer le livre de la collection
+        }
+
+        return $this;
+    }
+
+    public function setBooks(Collection $books): static
+    {
+        $this->books = $books;
 
         return $this;
     }

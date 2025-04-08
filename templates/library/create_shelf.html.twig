@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une étagère{% endblock %}
+
+{% block body %}
+    <div class="max-w-4xl mx-auto px-6 py-8">
+        <h1 class="text-3xl font-semibold text-gray-800 text-center mb-8">Créer une étagère</h1>
+        {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+            <div class="mb-4">
+                {{ form_label(form.shelfName, 'Nom de l\'étagère', {'label_attr': {'class': 'text-lg font-medium text-gray-700'}}) }}
+                {{ form_widget(form.shelfName, {'attr': {'class': 'mt-2 block w-full p-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500'}}) }}
+                {{ form_errors(form.shelfName) }}
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Créer l'étagère
+            </button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

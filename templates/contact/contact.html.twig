@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contactez-Nous{% endblock %}
+
+{% block body %}
+    <div class="max-w-2xl mx-auto px-6 py-8 bg-white shadow-lg rounded-lg mt-12">
+        <h1 class="text-4xl font-semibold text-center text-gray-800 mb-8">Nous contacter</h1>
+        {% if app.flashes('success') %}
+            <div class="alert alert-success mb-6 bg-green-100 text-green-700 p-4 rounded-lg shadow-md" role="alert" aria-live="polite">
+                {% for message in app.flashes('success') %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="post" action="{{ path('app_contact') }}" aria-labelledby="contact-form-title">
+            <section class="space-y-6">
+                <!-- Champ Email -->
+                <fieldset>
+                    <legend id="contact-form-title" class="sr-only">Formulaire de contact</legend>
+                    <div class="space-y-2">
+                        <label for="{{ form.email.vars.id }}" class="text-lg font-medium text-gray-700">
+                            Adresse Email
+                        </label>
+                        {{ form_widget(form.email, {
+                            'attr': {
+                                'class': 'p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full',
+                                'aria-describedby': 'email-help'
+                            }
+                        }) }}
+                        <small id="email-help" class="text-sm text-gray-500">
+                            Veuillez entrer votre adresse email.
+                        </small>
+                    </div>
+                </fieldset>
+                <!-- Champ Message -->
+                <fieldset>
+                    <div class="space-y-2">
+                        <label for="{{ form.message.vars.id }}" class="text-lg font-medium text-gray-700">
+                            Message
+                        </label>
+                        {{ form_widget(form.message, {
+                            'attr': {
+                                'class': 'p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 h-40 w-full',
+                                'aria-describedby': 'message-help'
+                            }
+                        }) }}
+                        <small id="message-help" class="text-sm text-gray-500">
+                            Rédigez votre message ici.
+                        </small>
+                    </div>
+                </fieldset>
+                <!-- Bouton d'envoi -->
+                <fieldset>
+                    {{ form_widget(form.submit, {
+                        'attr': {
+                            'class': 'w-full bg-indigo-600 text-white py-3 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50',
+                            'aria-label': 'Envoyer le message'
+                        }
+                    }) }}
+                </fieldset>
+            </section>
+        </form>
+    </div>
+{% endblock %}
