@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: LibraryRepository::class)]
+#[ORM\Table(name: 'user_library')]
 class Library
 {
     #[ORM\Id]
@@ -40,7 +41,7 @@ class Library
     private ?\DateTimeInterface $end_date = null;
 
     /**
-     * @var Collection<int, >
+     * @var Collection<int, Bookshelf >
      */
     #[ORM\OneToMany(targetEntity: Bookshelf::class, mappedBy: 'library', cascade: ["persist", "remove"])]
     private Collection $bookshelves;
