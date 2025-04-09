@@ -1,3 +1,4 @@
+const searchUrl = '/book/search';
 function searchBooks(event) {
     const query = document.getElementById('search-input').value; // Récupère le texte du champ de recherche
     const searchResults = document.getElementById('search-results');
