@@ -30,6 +30,8 @@ class LoginFormType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
+        dump('⚠️ configureOptions LoginFormType called'); // Vérifie que c'est bien ce form utilisé
+
         $resolver->setDefaults([
             'csrf_protection' => true,
             'csrf_field_name' => '_csrf_token',
