@@ -4,13 +4,7 @@ framework:
     session:
         handler_id: 'session.handler.redis'
 
-services:
-    Redis:
-        class: Redis
-        calls:
-            - connect:
-                - '%env(REDIS_HOST)%'
-                - '%env(int:REDIS_PORT)%'
+
 
     session.handler.redis:
         class: Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler
