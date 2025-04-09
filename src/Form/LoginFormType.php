@@ -27,4 +27,10 @@ class LoginFormType extends AbstractType
             'csrf_token_id'   => 'login_form',
         ]);
     }
+
+    public function getBlockPrefix(): string
+{
+    return '';
+}
+
 }

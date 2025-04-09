@@ -34,11 +34,11 @@ class CustomLoginController extends AbstractController
             if (!$user || !$passwordHasher->isPasswordValid($user, $data['password'])) {
                 $this->addFlash('error', 'Identifiants incorrects.');
             } else {
-                // 🔥 Connexion manuelle (Symfony 7)
-                $security->login($user, 'form_login'); // le 2e param peut être un nom d’authenticator
+                // ✅ Connexion manuelle ici :
+                $security->login($user, 'form_login');
 
-                $this->addFlash('success', 'Connexion réussie !');
-                return $this->redirectToRoute('app_home'); // à adapter selon ta route home
+                $this->addFlash('success', 'Bienvenue !');
+                return $this->redirectToRoute('app_home'); // adapte cette route
             }
         }
 
