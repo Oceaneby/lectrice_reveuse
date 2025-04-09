@@ -158,20 +158,21 @@
 		</div>
 
 		{% block javascripts %}
-			{{ encore_entry_script_tags('app') }}
-			{{ encore_entry_link_tags('app') }}
-			<script>
-				const searchUrl = '{{ path('app_book_search') }}'; 
-			</script>
-			<script src="{{ asset('js/cookies.js') }}" ></script>
-			<script src="{{ asset('js/menu_deroulant.js') }}" ></script>
-			<script src="{{ asset('js/menu_burger.js') }}" ></script>
-			<script src="{{ asset('js/search.js') }}" ></script>
-			<script src="{{ asset('js/review_edit.js') }}" ></script>
-			<script src="{{ asset('js/review_delete.js') }}" ></script>
-			<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    {# D'abord les scripts de base (cookies, menu, etc.) #}
+    <script src="{{ asset('js/cookies.js') }}" ></script>
+    <script src="{{ asset('js/menu_deroulant.js') }}" ></script>
+    <script src="{{ asset('js/menu_burger.js') }}" ></script>
+    <script src="{{ asset('js/search.js') }}" ></script>
+    <script src="{{ asset('js/review_edit.js') }}" ></script>
+    <script src="{{ asset('js/review_delete.js') }}" ></script>
 
-		{% endblock %}
+    {# Ensuite, on charge les fichiers Webpack à la fin (app.js, app.css) #}
+    {{ encore_entry_script_tags('app') }}
+
+    {# Optionnel, si tu as un CDN comme pour Tailwind, garde-le à la fin #}
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+{% endblock %}
+
 		
 	</body>
 </html>
