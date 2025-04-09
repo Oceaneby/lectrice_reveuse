@@ -23,6 +23,8 @@
 
     {{ form_row(loginForm.email) }}
     {{ form_row(loginForm.password) }}
+    {{ form_row(loginForm._csrf_token) }}
+
     {{ form_row(loginForm.submit) }}
 
     {{ form_end(loginForm) }}
