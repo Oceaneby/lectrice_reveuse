@@ -23,6 +23,7 @@ security:
                 password_parameter: password
                 default_target_path: app_home
                 enable_csrf: true
+                csrf_token_id: authenticate
             logout:
                 path: app_logout
                 # where to redirect after logout
