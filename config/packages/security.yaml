@@ -15,6 +15,10 @@ security:
         main:
             lazy: true
             provider: user_in_database
+            
+            form_login:
+                login_path: app_login
+                check_path: app_login
 
       
             logout:
