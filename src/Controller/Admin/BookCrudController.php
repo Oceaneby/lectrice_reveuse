@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use App\Controller\Trait\Show;
 
 class BookCrudController extends AbstractCrudController
@@ -26,6 +27,10 @@ class BookCrudController extends AbstractCrudController
             TextareaField::new('description'),
             AssociationField::new('authors'),
             AssociationField::new('publisher'),
+            ImageField::new('cover_image') // Ajouter le champ ImageField
+                ->setBasePath('uploads/book_cover') // Définit le répertoire d'images
+                ->setUploadDir('public/uploads/book_cover') // Définir le dossier de téléchargement
+                ->setRequired(false), 
            
         ];
     }
