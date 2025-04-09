@@ -7,55 +7,50 @@ use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-
-
+use Symfony\Bundle\SecurityBundle\Security;
 
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager): Response
-    {
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        Security $security,
+        EntityManagerInterface $entityManager
+    ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Encode le mot de passe
+            $plainPassword = $form->get('plainPassword')->getData();
+            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
-        if ($form->isSubmitted()) {
+            // Définir les rôles par défaut
+            $user->setRoles(['ROLE_USER']);
 
-            // dd($form->getErrors(true, false));
-if($form->isValid()) {
+            // Date d'inscription
+            $user->setRegistrationDate(new \DateTime());
 
-   $plainPassword = $form->get('plainPassword')->getData();
+            // Formatage et validation de la date de naissance
+            $birthDate = $user->getBirthDate();
+            if ($birthDate instanceof \DateTimeInterface) {
+                $user->setBirthDate($birthDate); // pas besoin de retransformer si déjà DateTime
+            }
 
-   // encode the plain password
-   $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            $entityManager->persist($user);
+            $entityManager->flush();
 
-   $user->setRoles(['ROLE_USER']); 
+            $this->addFlash('success', 'Votre inscription est réussie!');
 
-   $user->setRegistrationDate(new \DateTime()); 
-
-   $birthDate = $user->getBirthDate();
-   if ($birthDate) {
-       // Assurer que la date est bien dans un format compatible (si nécessaire)
-       $formattedBirthDate = $birthDate->format('Y-m-d'); 
-       $user->setBirthDate(new \DateTime($formattedBirthDate));  // Ici, la date est de nouveau transformée en objet DateTime si nécessaire
-   }
-  
-
-   $entityManager->persist($user);
-   $entityManager->flush();
-   $this->addFlash('success', 'Votre inscription est réussie!');
-   // do anything else you need here, like send an email
-   $security->login($user, 'form_login', 'main');
-   return $this->redirectToRoute('app_home');
-}
-         
-          } else {
-          
+            // ⚠️ Note : Security::login() nécessite un Authenticator (Symfony 6+)
+            // Tu dois créer un LoginAuthenticator si tu veux login automatiquement
+            // Ici on redirige simplement
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/register.html.twig', [
