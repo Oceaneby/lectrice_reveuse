@@ -51,9 +51,7 @@ final class BookController extends AbstractController
             // Recherche les livres
             $books = $bookRepository->searchBooks($query);
     
-            // Vérifie si des livres sont trouvés
-            dump($books);  
-    
+            // Vérifie si des livres sont trouvés    
             // Convertir les livres en un format simple
             foreach ($books as $book) {
                 $results[] = [
@@ -98,8 +96,6 @@ final class BookController extends AbstractController
 
             // Associer les auteurs sélectionnés
             $authors = $form->get('authors')->getData(); // On récupère les auteurs sélectionnés
-            // dump($authors); 
-            // dd($authors);
             foreach ($authors as $author) {
             $book->addAuthor($author);  
             $entityManager->persist($author); 
@@ -158,7 +154,6 @@ final class BookController extends AbstractController
     #[Route('/{id}/edit', name: 'app_book_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Book $book, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
-        // dump($book->getId());
       
     $cover_imagePath = $book->getCoverImage();
     if ($cover_imagePath) {

@@ -23,10 +23,8 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
-        // dump($form->getData());
 
         if ($form->isSubmitted()) {
-            // dd("ta maman quoi");
 
             // dd($form->getErrors(true, false));
 if($form->isValid()) {
@@ -46,7 +44,7 @@ if($form->isValid()) {
        $formattedBirthDate = $birthDate->format('Y-m-d'); 
        $user->setBirthDate(new \DateTime($formattedBirthDate));  // Ici, la date est de nouveau transformée en objet DateTime si nécessaire
    }
-   dump($form->getErrors(true));
+  
 
    $entityManager->persist($user);
    $entityManager->flush();
@@ -57,7 +55,7 @@ if($form->isValid()) {
 }
          
           } else {
-            dump($form->getErrors(true));
+          
         }
 
         return $this->render('registration/register.html.twig', [
