@@ -14,28 +14,17 @@ class LoginFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email', EmailType::class, [
-                'label' => 'Email',
-                'attr' => ['autocomplete' => 'email']
-            ])
-            ->add('password', PasswordType::class, [
-                'label' => 'Mot de passe',
-                'attr' => ['autocomplete' => 'current-password']
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Se connecter'
-            ])
-        ;
+            ->add('email', EmailType::class)
+            ->add('password', PasswordType::class)
+            ->add('submit', SubmitType::class, ['label' => 'Connexion']);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-       
-
         $resolver->setDefaults([
             'csrf_protection' => true,
-            'csrf_field_name' => '_csrf_token',
-            'csrf_token_id'   => 'authenticate',
+            'csrf_field_name' => '_token',
+            'csrf_token_id'   => 'login_form',
         ]);
     }
 }

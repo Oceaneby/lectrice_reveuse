@@ -19,15 +19,11 @@
             </div>
         {% endif %}
 
-    {{ form_start(loginForm, { action: path('app_login') }) }}
-
+ {{ form_start(loginForm) }}
     {{ form_row(loginForm.email) }}
     {{ form_row(loginForm.password) }}
-    {{ form_row(loginForm._csrf_token) }}
-
     {{ form_row(loginForm.submit) }}
-
-    {{ form_end(loginForm) }}
+{{ form_end(loginForm) }}
 
 
         {#

@@ -16,13 +16,7 @@ security:
             lazy: true
             provider: user_in_database
 
-            form_login:
-                login_path: app_login
-                check_path: app_login
-                username_parameter: login_form[email]
-                password_parameter: login_form[password]
-                enable_csrf: true
-                csrf_token_id: authenticate
+      
             logout:
                 path: app_logout
                 # where to redirect after logout
